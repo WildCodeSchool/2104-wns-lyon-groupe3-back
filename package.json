@@ -1,0 +1,50 @@
+{
+  "name": "2104-wns-lyon-groupe3-back",
+  "version": "1.0.0",
+  "description": "Back-end of Remotab application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run dev",
+    "build": "tsc",
+    "lint": "eslint . ",
+    "lint-fix": "eslint --fix . ",
+    "dev": "ts-node-dev --transpile-only --respawn ./src/app.ts",
+    "prod": "tsc && node ./build/src/index.js",
+    "debug": "tsc && node --inspect ./build/src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WildCodeSchool/2104-wns-lyon-groupe3-back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WildCodeSchool/2104-wns-lyon-groupe3-back/issues"
+  },
+  "homepage": "https://github.com/WildCodeSchool/2104-wns-lyon-groupe3-back#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/mongoose": "^5.10.5",
+    "@types/morgan": "^1.9.2",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "7.23.0",
+    "eslint-config-airbnb-typescript": "12.3.1",
+    "eslint-config-prettier": "8.2.0",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jest": "24.3.5",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-react": "^7.23.2",
+    "morgan": "^1.10.0",
+    "nodemon": "2.0.7",
+    "prettier": "2.2.1",
+    "ts-node": "9.1.1",
+    "ts-node-dev": "1.1.6",
+    "typescript": "3.4.3"
+  }
+}
