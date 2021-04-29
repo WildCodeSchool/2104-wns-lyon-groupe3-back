@@ -16,6 +16,11 @@ export class UserResolver {
     }
 
     @Query(returns => [User])
+    public async getUsersByRole(@Arg('role', type => String) role: string) {
+        return await UserModel.find({ role: role});
+    }
+
+    @Query(returns => [User])
     public async getAllUsers() {
         return await UserModel.find() 
     }
