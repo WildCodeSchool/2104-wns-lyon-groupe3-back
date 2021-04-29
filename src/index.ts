@@ -1,32 +1,29 @@
-import { ApolloServer, ServerInfo } from "apollo-server";
+import "reflect-metadata";
+import { ApolloServer } from "apollo-server";
 import mongoose from "mongoose";
-import { config, IConfig } from "./database/environment.dev";
-import UserController from './controller/UserController';
-// import logger from 'morgan';
-import { TYPE_DEFS } from "./model/typeDefs";
+import { config } from "./database/environment.dev";
 
-const userController:UserController = new UserController();
-const env:IConfig = config;
+import {  GraphQLSchema } from "graphql";
+import { buildSchema } from "type-graphql"
+import { UserResolver } from "./controller/UserResolver";
 
-const resolvers = {
-    Query: {
-        allUsers: userController.read
-    },
-    Mutation: {
-        createUser: userController.create
-    }
-};
+async function init() {
+    const schema:GraphQLSchema = await buildSchema(
+        {
+            resolvers:[UserResolver]
+        }
+    );
 
-const server = new ApolloServer(
-    {
-        typeDefs: TYPE_DEFS,
-        resolvers: resolvers
-    }
-);
+    const server:ApolloServer = new ApolloServer({schema});
 
-server.listen().then((info:ServerInfo) => console.log("Apollo Server started at: " + info.url));
+    await server.listen(4000);
 
-mongoose.connect(
-    env.db,
-    env.options
-).then(() => console.log('mongo started')).catch((err) => console.log("ERROR", err));
+
+
+    await mongoose.connect(config.db, config.options);
+
+    console.log("Apollo server started at: http://localhost:4000/");
+    console.log("mongodb started");
+}
+
+init();
