@@ -2,6 +2,7 @@ import { Arg, Query, Resolver } from "type-graphql";
 import { User } from "../model/graphql/User";
 import UserModel from "../model/UserModel";
 import mongoose from 'mongoose';
+import { isAbstractType } from "graphql";
 
 @Resolver(User)
 export class UserResolver {
@@ -12,12 +13,18 @@ export class UserResolver {
 
     @Query(returns => User, {nullable: true})
     public async getUserByEmail(@Arg('email', type => String) email: string) {
-        return await UserModel.findOne({ email: email})||null;
+        return await UserModel.findOne({ email: email })||null;
     }
 
     @Query(returns => [User])
     public async getUsersByRole(@Arg('role', type => String) role: string) {
-        return await UserModel.find({ role: role});
+        return await UserModel.find({ role: role });
+    }
+
+    @Query(returns => [User])
+    public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string) {
+        console.log(isActive);
+        return await UserModel.find({ isActive: isActive });
     }
 
     @Query(returns => [User])
