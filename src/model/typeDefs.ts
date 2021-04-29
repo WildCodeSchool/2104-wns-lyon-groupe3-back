@@ -65,7 +65,12 @@ export const TYPE_DEFS = gql`
         message: String
     }
 
+
     type Query {
         allUsers: [User]
+    }
+
+    type Mutation {
+        createUser(firstname: String!, lastname: String!): User
     }
 `;
