@@ -71,6 +71,16 @@ export const TYPE_DEFS = gql`
     }
 
     type Mutation {
-        createUser(firstname: String!, lastname: String!): User
+        createUser(
+            firstname: String!,
+            lastname: String!,
+            birthday: String,
+            email: String!,
+            password: String!,
+            address: String!,
+            role: String!,
+            isActive: String!,
+            picture: String
+        ): User
     }
 `;
