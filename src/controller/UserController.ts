@@ -9,8 +9,14 @@ export default class UserController {
     }
 
     async create(parent:any, args: any, context:any, info:any) {
-        console.log('ARGS :', args)
+
+        // console.log('PARENT :', parent);
+        // console.log('ARGS :', args);
+        // console.log('CONTEXT :', context);
+        // console.log('INFO :', info);
+
         await UserModel.init();
+        
         const model = new UserModel(args);
         const result = await model.save();
         return result;
