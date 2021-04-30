@@ -24,10 +24,13 @@
   },
   "homepage": "https://github.com/WildCodeSchool/2104-wns-lyon-groupe3-back#readme",
   "dependencies": {
+    "@types/bcrypt": "^3.0.1",
     "apollo-server": "^2.23.0",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "generate-password": "^1.6.0",
     "graphql": "^15.5.0",
     "mongoose": "^5.12.6",
     "reflect-metadata": "^0.1.13",
