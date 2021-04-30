@@ -4,6 +4,7 @@ import { User } from "../model/graphql/User";
 import UserModel from "../model/UserModel";
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
+import { validate } from 'class-validator';
 
 @Resolver(User)
 export class UserResolver {
@@ -45,7 +46,7 @@ export class UserResolver {
         @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
     ):Promise<User> {
 
-        const passClear = generator.generate({
+            const passClear = generator.generate({
             length: 12,
             numbers: true,
             excludeSimilarCharacters: true,
@@ -53,24 +54,54 @@ export class UserResolver {
             strict: true
         })
 
+        if(birthday === undefined) {
+            birthday = '';
+        }
+
+        if(picture === undefined) {
+            picture = '';
+        }
+
         console.log(passClear);
 
         const passHash = bcrypt.hashSync(passClear,10);
 
         console.log(passHash);
 
-        await UserModel.init();
+        const user = new User();
+        user.firstname = firstname;
+        user.lastname = lastname;
+        user.birthday = birthday;
+        user.email = email;
+        user.address = address;
+        user.role = role;
+        user.isActive = isActive;
+        user.picture = picture;
+        
+        validate(user).then(errors => {
+            // errors is an array of validation errors
+            if (errors.length > 0) {
+              console.log('validation failed. errors: ', errors);
+            } else {
+              console.log('validation succeed');
+            }
+          });
+
         const body: any = {
-            firstname,
-            lastname,
-            birthday,
-            email,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            birthday: user.birthday,
+            email: user.email,
             password: passHash,
-            address,
-            role,
-            isActive,
-            picture
+            address: user.address,
+            role: user.role,
+            isActive: user.isActive,
+            picture: user.picture
         };
+
+        await UserModel.init();
+
+
         const model = new UserModel(body);
         const result = await model.save();
         return result;
