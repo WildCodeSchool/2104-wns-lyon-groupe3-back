@@ -2,6 +2,8 @@
 import { Arg, Query, Resolver, Mutation } from "type-graphql";
 import { User } from "../model/graphql/User";
 import UserModel from "../model/UserModel";
+import bcrypt from 'bcrypt';
+import generator from 'generate-password';
 
 @Resolver(User)
 export class UserResolver {
@@ -36,20 +38,34 @@ export class UserResolver {
         @Arg("firstname") firstname: string,
         @Arg("lastname") lastname: string,
         @Arg("email") email: string,
-        @Arg("password") password: string,
         @Arg("address") address: string,
         @Arg("role", {defaultValue: 'STUDENT'}) role: string,
         @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
         @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
         @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
     ):Promise<User> {
+
+        const passClear = generator.generate({
+            length: 12,
+            numbers: true,
+            excludeSimilarCharacters: true,
+            symbols: true,
+            strict: true
+        })
+
+        console.log(passClear);
+
+        const passHash = bcrypt.hashSync(passClear,10);
+
+        console.log(passHash);
+
         await UserModel.init();
         const body: any = {
             firstname,
             lastname,
             birthday,
             email,
-            password,
+            password: passHash,
             address,
             role,
             isActive,
