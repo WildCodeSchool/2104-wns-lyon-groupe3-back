@@ -1,34 +1,35 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Field, ID, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class User {
     @Field(type=>ID)
-    _id:string = "";
+    _id = "";
 
     @Field(type=>String)
-    firstname:string = "";
+    firstname = "";
 
     @Field(type=>String)
-    lastname:string = "";
+    lastname = "";
 
     @Field(type=>String, {nullable: true})
-    birthday:string = "";
+    birthday = "";
 
     @Field(type=>String)
-    email:string = "";
+    email = "";
 
     @Field(type=>String)
-    password:string = "";
+    password = "";
 
     @Field(type=>String)
-    address:string = "";
+    address = "";
 
     @Field(type=>String)
-    role:string = "STUDENT";
+    role = "STUDENT";
 
     @Field(type=>String)
-    isActive:string = "ACTIVE";
+    isActive = "ACTIVE";
 
     @Field(type=>String, {nullable: true})
-    picture:string = "";
+    picture = "";
 }
