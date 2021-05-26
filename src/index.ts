@@ -3,8 +3,8 @@ import { ApolloServer } from "apollo-server";
 import mongoose from "mongoose";
 import { config } from "./database/environment.dev";
 
-import {  GraphQLSchema } from "graphql";
-import { buildSchema } from "type-graphql"
+import { GraphQLSchema } from "graphql";
+import { buildSchema } from "type-graphql";
 import { UserResolver } from "./controller/UserResolver";
 
 async function init() {

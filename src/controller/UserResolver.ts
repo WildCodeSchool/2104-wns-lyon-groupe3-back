@@ -4,7 +4,7 @@ import { User } from "../model/graphql/User";
 import UserModel, { IUser } from "../model/userModel";
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
-import { validate } from 'class-validator';
+import { validate } from "class-validator";
 
 @Resolver(User)
 export class UserResolver {
@@ -78,7 +78,7 @@ export class UserResolver {
         user.isActive = isActive;
         user.picture = picture;
         
-        validate(user).then(errors => {
+        validate(user).then((errors) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
               console.log('validation failed. errors: ', errors);

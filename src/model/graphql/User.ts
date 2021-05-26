@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { IsEmail,  MaxLength, MinLength } from "class-validator";
 import { Field, ID, ObjectType } from "type-graphql";
+import 'reflect-metadata';
 
 @ObjectType()
 export class User {
