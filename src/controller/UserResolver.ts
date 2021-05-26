@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Arg, Query, Resolver, Mutation } from "type-graphql";
 import { User } from "../model/graphql/User";
-import UserModel from "../model/UserModel";
+import UserModel, { IUser } from "../model/userModel";
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
 import { validate } from 'class-validator';
@@ -9,28 +9,28 @@ import { validate } from 'class-validator';
 @Resolver(User)
 export class UserResolver {
     @Query(returns => User, {nullable: true})
-    public async getUserById(@Arg('id', type => String) id: string):Promise<User> {
+    public async getUserById(@Arg('id', type => String) id: string):Promise<IUser | null> {
         return await UserModel.findById(id);
     }
 
     @Query(returns => User, {nullable: true})
-    public async getUserByEmail(@Arg('email', type => String) email: string):Promise<User> {
+    public async getUserByEmail(@Arg('email', type => String) email: string):Promise<IUser | null> {
         return await UserModel.findOne({ email: email })||null;
     }
 
     @Query(returns => [User])
-    public async getUsersByRole(@Arg('role', type => String) role: string):Promise<Array<User>> {
+    public async getUsersByRole(@Arg('role', type => String) role: string):Promise<Array<IUser | null>> {
         return await UserModel.find({ role: role });
     }
 
     @Query(returns => [User])
-    public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string):Promise<Array<User>> {
+    public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string):Promise<Array<IUser | null>> {
         console.log(isActive);
         return await UserModel.find({ isActive: isActive });
     }
 
     @Query(returns => [User])
-    public async getAllUsers():Promise<Array<User>> {
+    public async getAllUsers():Promise<Array<IUser | null>> {
         return await UserModel.find() 
     }
 
@@ -44,7 +44,7 @@ export class UserResolver {
         @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
         @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
         @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
-    ):Promise<User> {
+    ):Promise<IUser | null> {
 
             const passClear = generator.generate({
             length: 12,
@@ -87,7 +87,7 @@ export class UserResolver {
             }
           });
 
-        const body: any = {
+        const body = {
             firstname: user.firstname,
             lastname: user.lastname,
             birthday: user.birthday,
