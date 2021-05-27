@@ -7,7 +7,10 @@ import { ApolloServer } from 'apollo-server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 const { createTestClient } = require('apollo-server-testing');
-import UserModel from "../model/userModel";
+// import UserModel from "../model/userModel";
+import { UserResolver } from "./UserResolver";
+
+const User = new UserResolver();
 
 const data = {
     firstname: "Pierre",
@@ -29,7 +32,7 @@ const GET_USER_BY_ID = gql`
 `;
 
 const CREATE_USER = gql`
-    mutation createWilder(
+    mutation createUser(
         $firstname: String!,
         $lastname: String!,
         $email: String!,
@@ -40,6 +43,34 @@ const CREATE_USER = gql`
         $picture: String,
     ) {
         createUser(
+            firstname: $firstname,
+            lastname: $lastname,
+            email: $email,
+            address: $address,
+            role: $role,
+            isActive: $isActive,
+            birthday: $birthday,
+            picture: $picture
+        ) {
+            _id, firstname, lastname, email, address, role, isActive, birthday, picture
+        }
+    }
+`;
+
+const UPDATE_USER = gql`
+    mutation updateUser(
+        $id: String!,
+        $firstname: String!,
+        $lastname: String!,
+        $email: String!,
+        $address: String!,
+        $role: String,
+        $isActive: String,
+        $birthday: String,
+        $picture: String,
+    ) {
+        updateUser(
+            id: $id,
             firstname: $firstname,
             lastname: $lastname,
             email: $email,
@@ -67,7 +98,7 @@ describe(
         )
 
         // après chaque test
-        beforeEach(
+        afterEach(
             async ()=>{
                 // on vide toutes les collections après chaque test, comme ça on 
                 // ne dépend pas de l'ordre d'éxécution des tests
@@ -91,21 +122,21 @@ describe(
         it(
             "We should get the same number of objects in the Resolver than in the query",
             async () => {
-                const spy = jest.spyOn(UserModel, "find");
-                expect(spy).toHaveBeenCalledTimes(2);
+                // const spy = jest.spyOn(UserModel, "find");
+                // expect(spy).toHaveBeenCalledTimes(1);
                 
-                // const allUsers = await User.getAllUsers();
-                // const count = allUsers.length;
+                const allUsers = await User.getAllUsers();
+                const count = allUsers.length;
 
-                // const { query } = createTestClient(apollo);
-                // const res = await query({ query: GET_ALL_USERS });
+                const { query } = createTestClient(apollo);
+                const res = await query({ query: GET_ALL_USERS });
 
-                // expect(res.data.getAllUsers).toBeDefined();
-                // expect(res.data.getAllUsers.length).toEqual(count);
+                expect(res.data.getAllUsers).toBeDefined();
+                expect(res.data.getAllUsers.length).toEqual(count);
             }
         )
 
-        fit(
+        it(
             'We should get the user associated to the id',
             async () => {
                 const { query, mutate } = createTestClient(apollo);
@@ -125,6 +156,32 @@ describe(
 
                 expect(res.data.createUser.email).toEqual(data.email);
                 expect(res.data.createUser.firstname).toEqual(data.firstname);
+            }
+        )
+
+        fit(
+            'We should update user informations',
+            async () => {
+                const { mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+
+                const newData = {
+                    id: res1.data.createUser._id,
+                    firstname: "Seb",
+                    lastname: "Promènelechien",
+                    email: "sebaimesonchien@gneugneu.com",
+                    address: "1 rue du ptit chiot trop mimi",
+                    role: "STUDENT",
+                    isActive: "ACTIVE",
+                    birthday: "",
+                    picture: ""
+                }
+
+                const res2 = await mutate({ query: UPDATE_USER, variables: newData});
+
+                expect(res2.data.updateUser.firstname).toEqual(newData.firstname);
+                expect(res2.data.updateUser.email).toEqual(newData.email);
             }
         )
     }

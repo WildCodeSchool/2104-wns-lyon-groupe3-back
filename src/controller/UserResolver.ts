@@ -45,9 +45,9 @@ export class UserResolver {
         @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
         @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
         @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
-    ):Promise<IUser | null> {
+    ):Promise<IUser | any> {
 
-            const passClear = generator.generate({
+        const passClear = generator.generate({
             length: 12,
             numbers: true,
             excludeSimilarCharacters: true,
@@ -82,11 +82,11 @@ export class UserResolver {
         validate(user).then((errors) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
-              console.log('validation failed. errors: ', errors);
+                console.log('validation failed. errors: ', errors);
             } else {
-              console.log('validation succeed');
+                console.log('validation succeed');
             }
-          });
+        });
 
         const body = {
             firstname: user.firstname,
@@ -100,12 +100,66 @@ export class UserResolver {
             picture: user.picture
         };
 
-        await UserModel.init();
-
+        UserModel.init();
 
         const model = new UserModel(body);
-        const result = await model.save();
+        const result = model.save();
         return result;
+    }
+
+    @Mutation(returns => User)
+    public async updateUser(
+        @Arg("id") id: string,
+        @Arg("firstname") firstname: string,
+        @Arg("lastname") lastname: string,
+        @Arg("email") email: string,
+        @Arg("address") address: string,
+        @Arg("role", {defaultValue: 'STUDENT'}) role: string,
+        @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
+        @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
+        @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
+    ):Promise<IUser | null> {
+
+        if (birthday === undefined) {
+            birthday = "";
+        }
+
+        if (picture === undefined) {
+            picture = "";
+        }
+
+        const user = new User();
+        user.firstname = firstname;
+        user.lastname = lastname;
+        user.birthday = birthday;
+        user.email = email;
+        user.address = address;
+        user.role = role;
+        user.isActive = isActive;
+        user.picture = picture;
+
+        validate(user).then((errors) => {
+            // errors is an array of validation errors
+            if (errors.length > 0) {
+                console.log('validation failed. errors: ', errors);
+            } else {
+                console.log('validation succeed');
+            }
+        });
+
+        const body = {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            birthday: user.birthday,
+            email: user.email,
+            address: user.address,
+            role: user.role,
+            isActive: user.isActive,
+            picture: user.picture
+        };
+
+        await UserModel.updateOne({ _id: id }, body);
+        return await UserModel.findById(id);
     }
 
 }
