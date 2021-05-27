@@ -34,6 +34,7 @@
     "express": "^4.17.1",
     "generate-password": "^1.6.0",
     "graphql": "^15.5.0",
+    "mongodb-memory-server": "^6.9.6",
     "mongoose": "^5.12.6",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1"
@@ -46,6 +47,7 @@
     "@types/morgan": "^1.9.2",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
+    "apollo-server-testing": "^2.24.1",
     "eslint": "7.23.0",
     "eslint-config-airbnb-typescript": "12.3.1",
     "eslint-config-prettier": "8.2.0",

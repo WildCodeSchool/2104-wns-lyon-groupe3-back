@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
 import mongoose from "mongoose";
@@ -7,7 +8,7 @@ import { GraphQLSchema } from "graphql";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./controller/UserResolver";
 
-async function init() {
+export async function init(config:any):Promise<any> {
     const schema:GraphQLSchema = await buildSchema(
         {
             resolvers:[UserResolver]
@@ -18,12 +19,11 @@ async function init() {
 
     await server.listen(4000);
 
-
-
     await mongoose.connect(config.db, config.options);
 
-    console.log("Apollo server started at: http://localhost:4000/");
-    console.log("mongodb started");
+    console.log("Mongodb Started & Apollo server started at: http://localhost:4000/");
+
+    return server;
 }
 
-init();
+init(config);
