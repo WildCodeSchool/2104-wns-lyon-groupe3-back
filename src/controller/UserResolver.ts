@@ -31,7 +31,8 @@ export class UserResolver {
 
     @Query(returns => [User])
     public async getAllUsers():Promise<Array<IUser | null>> {
-        return await UserModel.find() 
+        const data = await UserModel.find();
+        return data;
     }
 
     @Mutation(returns => User)

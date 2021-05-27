@@ -13,7 +13,7 @@ export interface IUser extends Document {
     role: string,
     isActive: string,
     picture: string
-} 
+}
 
 const UserSchema = new Schema(
     {
