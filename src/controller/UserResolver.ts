@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Arg, Query, Resolver, Mutation } from "type-graphql";
 import { User } from "../model/graphql/User";
 import UserModel, { IUser } from "../model/userModel";
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
-import { validate } from "class-validator";
-
+// import { validate } from "class-validator";
+const { validate } = require("class-validator");
 @Resolver(User)
 export class UserResolver {
     @Query(returns => User, { nullable: true })
@@ -79,7 +80,7 @@ export class UserResolver {
         user.isActive = isActive;
         user.picture = picture;
 
-        validate(user).then((errors) => {
+        validate(user).then((errors:any) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
                 console.log('validation failed. errors: ', errors);
@@ -138,7 +139,7 @@ export class UserResolver {
         user.isActive = isActive;
         user.picture = picture;
 
-        validate(user).then((errors) => {
+        validate(user).then((errors:any) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
                 console.log('validation failed. errors: ', errors);

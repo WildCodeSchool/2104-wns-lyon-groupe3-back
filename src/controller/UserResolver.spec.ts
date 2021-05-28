@@ -85,6 +85,14 @@ const UPDATE_USER = gql`
     }
 `;
 
+const DELETE_USER = gql`
+    mutation deleteUser($id: String!) {
+        deleteUser(id: $id) {
+            _id, firstname, lastname, email, address, role, isActive, birthday, picture
+        }
+    }
+`;
+
 describe(
     "Tests on getUserById",
     () => {
@@ -192,6 +200,18 @@ describe(
 
                 expect(res2.data.updateUser.firstname).toEqual(newData.firstname);
                 expect(res2.data.updateUser.email).toEqual(newData.email);
+            }
+        )
+
+        it(
+            'We should delete a user',
+            async () => {
+                const { mutate } = createTestClient(apollo);
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await mutate({ query: DELETE_USER, variables: {id: res1.data.createUser._id} });
+
+                expect(res2.data.deleteUser._id).toEqual(res1.data.createUser._id);
+                expect(res2.data.deleteUser.email).toEqual(res1.data.createUser.email);
             }
         )
     }
