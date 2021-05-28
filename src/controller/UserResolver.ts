@@ -8,29 +8,29 @@ import { validate } from "class-validator";
 
 @Resolver(User)
 export class UserResolver {
-    @Query(returns => User, {nullable: true})
-    public async getUserById(@Arg('id', type => String) id: string):Promise<IUser | null> {
+    @Query(returns => User, { nullable: true })
+    public async getUserById(@Arg('id', type => String) id: string): Promise<IUser | null> {
         return await UserModel.findById(id);
     }
 
-    @Query(returns => User, {nullable: true})
-    public async getUserByEmail(@Arg('email', type => String) email: string):Promise<IUser | null> {
-        return await UserModel.findOne({ email: email })||null;
+    @Query(returns => User, { nullable: true })
+    public async getUserByEmail(@Arg('email', type => String) email: string): Promise<IUser | null> {
+        return await UserModel.findOne({ email: email }) || null;
     }
 
     @Query(returns => [User])
-    public async getUsersByRole(@Arg('role', type => String) role: string):Promise<Array<IUser | null>> {
+    public async getUsersByRole(@Arg('role', type => String) role: string): Promise<Array<IUser | null>> {
         return await UserModel.find({ role: role });
     }
 
     @Query(returns => [User])
-    public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string):Promise<Array<IUser | null>> {
+    public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string): Promise<Array<IUser | null>> {
         console.log(isActive);
         return await UserModel.find({ isActive: isActive });
     }
 
     @Query(returns => [User])
-    public async getAllUsers():Promise<Array<IUser | null>> {
+    public async getAllUsers(): Promise<Array<IUser | null>> {
         const data = await UserModel.find();
         return data;
     }
@@ -41,11 +41,11 @@ export class UserResolver {
         @Arg("lastname") lastname: string,
         @Arg("email") email: string,
         @Arg("address") address: string,
-        @Arg("role", {defaultValue: 'STUDENT'}) role: string,
-        @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
-        @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
-        @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
-    ):Promise<IUser | any> {
+        @Arg("role", { defaultValue: 'STUDENT' }) role: string,
+        @Arg("isActive", { defaultValue: 'ACTIVE' }) isActive: string,
+        @Arg("birthday", { defaultValue: '', nullable: true }) birthday?: string,
+        @Arg("picture", { defaultValue: '', nullable: true }) picture?: string,
+    ): Promise<IUser | any> {
 
         const passClear = generator.generate({
             length: 12,
@@ -55,17 +55,17 @@ export class UserResolver {
             strict: true
         })
 
-        if(birthday === undefined) {
+        if (birthday === undefined) {
             birthday = '';
         }
 
-        if(picture === undefined) {
+        if (picture === undefined) {
             picture = '';
         }
 
         console.log(passClear);
 
-        const passHash = bcrypt.hashSync(passClear,10);
+        const passHash = bcrypt.hashSync(passClear, 10);
 
         console.log(passHash);
 
@@ -78,7 +78,7 @@ export class UserResolver {
         user.role = role;
         user.isActive = isActive;
         user.picture = picture;
-        
+
         validate(user).then((errors) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
@@ -114,11 +114,11 @@ export class UserResolver {
         @Arg("lastname") lastname: string,
         @Arg("email") email: string,
         @Arg("address") address: string,
-        @Arg("role", {defaultValue: 'STUDENT'}) role: string,
-        @Arg("isActive", {defaultValue: 'ACTIVE'}) isActive: string,
-        @Arg("birthday", {defaultValue: '', nullable: true}) birthday?: string,
-        @Arg("picture", {defaultValue: '', nullable: true}) picture?: string,
-    ):Promise<IUser | null> {
+        @Arg("role", { defaultValue: 'STUDENT' }) role: string,
+        @Arg("isActive", { defaultValue: 'ACTIVE' }) isActive: string,
+        @Arg("birthday", { defaultValue: '', nullable: true }) birthday?: string,
+        @Arg("picture", { defaultValue: '', nullable: true }) picture?: string,
+    ): Promise<IUser | null> {
 
         if (birthday === undefined) {
             birthday = "";
@@ -160,6 +160,15 @@ export class UserResolver {
 
         await UserModel.updateOne({ _id: id }, body);
         return await UserModel.findById(id);
+    }
+
+    @Mutation(returns => User)
+    public async deleteUser(
+        @Arg("id") id: string,
+    ): Promise<IUser | null> {
+        const user = await UserModel.findById(id);
+        await UserModel.deleteOne({ _id: id });
+        return user;
     }
 
 }
