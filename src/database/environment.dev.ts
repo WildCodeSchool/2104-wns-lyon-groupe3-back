@@ -16,11 +16,15 @@ export interface IConfig{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     db:any;
     options: Options; 
-    serverPort:number
+    serverPort:number;
+    autoListen: boolean;
+    verbose: boolean;
 }
 
 export const config:IConfig = {
     db: db, 
     options: options, 
-    serverPort: 5000
+    serverPort: 5000,
+    autoListen: true,
+    verbose: true
 };

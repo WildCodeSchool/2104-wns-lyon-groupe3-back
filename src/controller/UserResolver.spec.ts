@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import "reflect-metadata";
 import { init } from '../index';
-import { config } from '../database/environment.dev';
+import { config } from '../database/environment.testing';
 import { gql } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -88,22 +88,24 @@ const UPDATE_USER = gql`
 describe(
     "Tests on getUserById",
     () => {
-        let apollo:ApolloServer|null = null;
-        const mongo:MongoMemoryServer = new MongoMemoryServer();
+        let apollo: ApolloServer | null = null;
+        const mongo: MongoMemoryServer = new MongoMemoryServer();
 
         beforeAll(
             async () => {
+                config.db = await mongo.getUri();
+                console.log(config);
                 apollo = await init(config);
             }
         )
 
         // après chaque test
         afterEach(
-            async ()=>{
+            async () => {
                 // on vide toutes les collections après chaque test, comme ça on 
                 // ne dépend pas de l'ordre d'éxécution des tests
-                const collections = mongoose.connection.collections; 
-                for( const key in collections ){
+                const collections = mongoose.connection.collections;
+                for (const key in collections) {
                     await mongoose.connection.db.collection(key).deleteMany({});
                 }
             }
@@ -124,7 +126,7 @@ describe(
             async () => {
                 // const spy = jest.spyOn(UserModel, "find");
                 // expect(spy).toHaveBeenCalledTimes(1);
-                
+
                 const allUsers = await User.getAllUsers();
                 const count = allUsers.length;
 
@@ -142,7 +144,7 @@ describe(
                 const { query, mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data });
-                const res2 = await query({ query: GET_USER_BY_ID, variables: { id: res1.data.createUser._id }});
+                const res2 = await query({ query: GET_USER_BY_ID, variables: { id: res1.data.createUser._id } });
 
                 expect(res1.data.createUser._id).toEqual(res2.data.getUserById._id);
             }
@@ -159,7 +161,7 @@ describe(
             }
         )
 
-        fit(
+        it(
             'We should update user informations',
             async () => {
                 const { mutate } = createTestClient(apollo);
@@ -178,7 +180,7 @@ describe(
                     picture: ""
                 }
 
-                const res2 = await mutate({ query: UPDATE_USER, variables: newData});
+                const res2 = await mutate({ query: UPDATE_USER, variables: newData });
 
                 expect(res2.data.updateUser.firstname).toEqual(newData.firstname);
                 expect(res2.data.updateUser.email).toEqual(newData.email);
