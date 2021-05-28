@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import "reflect-metadata";
-import { init } from '../index';
+import { init } from '../server';
 import { config } from '../database/environment.testing';
 import { gql } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server';
@@ -89,15 +89,19 @@ describe(
     "Tests on getUserById",
     () => {
         let apollo: ApolloServer | null = null;
-        const mongo: MongoMemoryServer = new MongoMemoryServer();
+        let mongo: MongoMemoryServer = new MongoMemoryServer();
 
+        // avant tous les tests
         beforeAll(
             async () => {
+                // on crée une version in memory de mongo
+                mongo = new MongoMemoryServer();
                 config.db = await mongo.getUri();
-                console.log(config);
+
+                // et on connecte notre apollo server
                 apollo = await init(config);
             }
-        )
+        );
 
         // après chaque test
         afterEach(
@@ -105,18 +109,22 @@ describe(
                 // on vide toutes les collections après chaque test, comme ça on 
                 // ne dépend pas de l'ordre d'éxécution des tests
                 const collections = mongoose.connection.collections;
-                for (const key in collections) {
+                for (let key in collections) {
                     await mongoose.connection.db.collection(key).deleteMany({});
                 }
             }
         )
 
+        // après tous les tests
         afterAll(
             async () => {
+                // on stoppe apollo server
                 if (apollo !== null)
                     await apollo.stop();
 
+                // on stoppe notre serveur mongo "in memory"
                 await mongo.stop();
+                // on déconnecte mongoose
                 await mongoose.disconnect();
             }
         );
