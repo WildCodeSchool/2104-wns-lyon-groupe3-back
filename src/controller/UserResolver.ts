@@ -109,7 +109,7 @@ export class UserResolver {
         });
     }
 
-    @Mutation(returns => User)
+    @Mutation(returns => User || String, { nullable: true })
     public async updateUser(
         @Arg("id") id: string,
         @Arg("firstname") firstname: string,
@@ -140,28 +140,34 @@ export class UserResolver {
         user.isActive = isActive;
         user.picture = picture;
 
-        validate(user).then((errors:any) => {
+        const isValidate = validate(user).then((errors:any) => {
             // errors is an array of validation errors
             if (errors.length > 0) {
                 console.log('validation failed. errors: ', errors);
+                return JSON.stringify(errors);
             } else {
                 console.log('validation succeed');
+                return "success";
             }
         });
 
-        const body = {
-            firstname: user.firstname,
-            lastname: user.lastname,
-            birthday: user.birthday,
-            email: user.email,
-            address: user.address,
-            role: user.role,
-            isActive: user.isActive,
-            picture: user.picture
-        };
-
-        await UserModel.updateOne({ _id: id }, body);
-        return await UserModel.findById(id);
+        if (isValidate === "success") {
+            const body = {
+                firstname: user.firstname,
+                lastname: user.lastname,
+                birthday: user.birthday,
+                email: user.email,
+                address: user.address,
+                role: user.role,
+                isActive: user.isActive,
+                picture: user.picture
+            };
+    
+            await UserModel.updateOne({ _id: id }, body);
+            return await UserModel.findById(id);
+        } else {
+            return isValidate;
+        }
     }
 
     @Mutation(returns => User)
