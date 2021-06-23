@@ -94,6 +94,8 @@ export class UserResolver {
         @Arg("picture", { defaultValue: '', nullable: true }) picture?: string,
     ): Promise<IUser | null> {
 
+        const currentUser:any = await UserModel.findById(id);
+
         const user = new User();
         user.firstname = firstname;
         user.lastname = lastname;
@@ -106,13 +108,14 @@ export class UserResolver {
 
         const errors = await validate(user);
         
-        // errors is an array of validation errors
+        //TODO errors is an array of validation errors
         if (errors.length > 0) return null;
        
-        const body = {...user, _id: id};
+        //TODO value of password will be changed when we will manage the modification of it
+        const body = {...user, _id: id, password: currentUser.password};
 
         await UserModel.updateOne({ _id: id }, body);
-        return await UserModel.findById(id);
+        return currentUser;
         
     }
 
