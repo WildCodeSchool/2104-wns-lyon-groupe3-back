@@ -36,7 +36,7 @@ export class UserResolver {
         return data;
     }
 
-    @Mutation(returns => User)
+    @Mutation(returns => User || String, { nullable: true })
     public async createUser(
         @Arg("firstname") firstname: string,
         @Arg("lastname") lastname: string,
@@ -82,30 +82,31 @@ export class UserResolver {
 
         validate(user).then((errors:any) => {
             // errors is an array of validation errors
+            console.log('errors 1', errors)
             if (errors.length > 0) {
-                console.log('validation failed. errors: ', errors);
+                console.log('Validation failed. Errors: ', errors);
+                return JSON.stringify(errors);
             } else {
-                console.log('validation succeed');
+                console.log('Validation succeeded');
+                const body = {
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    birthday: user.birthday,
+                    email: user.email,
+                    password: passHash,
+                    address: user.address,
+                    role: user.role,
+                    isActive: user.isActive,
+                    picture: user.picture
+                };
+        
+                UserModel.init();
+        
+                const model = new UserModel(body);
+                const result = model.save();
+                return result;
             }
         });
-
-        const body = {
-            firstname: user.firstname,
-            lastname: user.lastname,
-            birthday: user.birthday,
-            email: user.email,
-            password: passHash,
-            address: user.address,
-            role: user.role,
-            isActive: user.isActive,
-            picture: user.picture
-        };
-
-        UserModel.init();
-
-        const model = new UserModel(body);
-        const result = model.save();
-        return result;
     }
 
     @Mutation(returns => User)

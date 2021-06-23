@@ -10,12 +10,11 @@ export class User {
     _id = "";
 
     @Field(type => String)
-    @Length(5, 64)
+    @Length(1, 64)
     firstname = "";
 
     @Field(type => String)
-    @MinLength(5)
-    @MaxLength(64)
+    @Length(1, 64)
     lastname = "";
 
     //@IsDate()

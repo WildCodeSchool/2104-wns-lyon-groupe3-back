@@ -189,7 +189,7 @@ describe(
                     firstname: "Seb",
                     lastname: "Promènelechien",
                     email: "sebaimesonchien@gneugneu.com",
-                    address: "1 rue du ptit chiot trop mimi",
+                    address: "1 rue du ptit chiot trop mimi <3",
                     role: "STUDENT",
                     isActive: "ACTIVE",
                     birthday: "",
