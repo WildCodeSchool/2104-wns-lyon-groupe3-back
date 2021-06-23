@@ -31,6 +31,18 @@ export class UserResolver {
     }
 
     @Query(returns => [User])
+    public async getUsersByFirstname(@Arg('firstname', type => String) firstname: string): Promise<Array<IUser | null>> {
+        console.log(firstname);
+        return await UserModel.find({ firstname: firstname });
+    }
+
+    @Query(returns => [User])
+    public async getUsersByLastname(@Arg('lastname', type => String) lastname: string): Promise<Array<IUser | null>> {
+        console.log(lastname);
+        return await UserModel.find({ lastname: lastname });
+    }
+
+    @Query(returns => [User])
     public async getAllUsers(): Promise<Array<IUser | null>> {
         const data = await UserModel.find();
         return data;
