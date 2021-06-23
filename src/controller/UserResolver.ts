@@ -119,13 +119,12 @@ export class UserResolver {
         
     }
 
-    @Mutation(returns => User)
+    @Mutation(returns => User, { nullable: true })
     public async deleteUser(
         @Arg("id") id: string,
     ): Promise<IUser | null> {
         const user = await UserModel.findById(id);
-        await UserModel.deleteOne({ _id: id });
+        if (user !== null) await UserModel.deleteOne({ _id: id });
         return user;
     }
-
 }
