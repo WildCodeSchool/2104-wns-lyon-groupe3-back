@@ -36,7 +36,7 @@ export class UserResolver {
         return data;
     }
 
-    @Mutation(returns => User || String, { nullable: true })
+    @Mutation(returns => User, { nullable: true })
     public async createUser(
         @Arg("firstname") firstname: string,
         @Arg("lastname") lastname: string,
@@ -46,7 +46,7 @@ export class UserResolver {
         @Arg("isActive", { defaultValue: 'ACTIVE' }) isActive: string,
         @Arg("birthday", { defaultValue: '', nullable: true }) birthday?: string,
         @Arg("picture", { defaultValue: '', nullable: true }) picture?: string,
-    ): Promise<IUser | any> {
+    ): Promise<IUser | null> {
 
         const passClear = generator.generate({
             length: 12,
@@ -56,60 +56,32 @@ export class UserResolver {
             strict: true
         })
 
-        if (birthday === undefined) {
-            birthday = '';
-        }
-
-        if (picture === undefined) {
-            picture = '';
-        }
-
-        console.log(passClear);
-
         const passHash = bcrypt.hashSync(passClear, 10);
-
-        console.log(passHash);
 
         const user = new User();
         user.firstname = firstname;
         user.lastname = lastname;
-        user.birthday = birthday;
+        user.birthday = birthday || "";
         user.email = email;
         user.address = address;
         user.role = role;
         user.isActive = isActive;
-        user.picture = picture;
+        user.picture = picture || "";
 
-        validate(user).then((errors:any) => {
-            // errors is an array of validation errors
-            console.log('errors 1', errors)
-            if (errors.length > 0) {
-                console.log('Validation failed. Errors: ', errors);
-                return JSON.stringify(errors);
-            } else {
-                console.log('Validation succeeded');
-                const body = {
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    birthday: user.birthday,
-                    email: user.email,
-                    password: passHash,
-                    address: user.address,
-                    role: user.role,
-                    isActive: user.isActive,
-                    picture: user.picture
-                };
+        const errors = await validate(user);
+
+        if (errors.length > 0) return null;
         
-                UserModel.init();
-        
-                const model = new UserModel(body);
-                const result = model.save();
-                return result;
-            }
-        });
+        const body = {...user, _id: null, password: passHash};
+
+        UserModel.init();
+
+        const model = new UserModel(body);
+        const result = model.save();
+        return result;
     }
 
-    @Mutation(returns => User || String, { nullable: true })
+    @Mutation(returns => User, { nullable: true })
     public async updateUser(
         @Arg("id") id: string,
         @Arg("firstname") firstname: string,
@@ -122,52 +94,26 @@ export class UserResolver {
         @Arg("picture", { defaultValue: '', nullable: true }) picture?: string,
     ): Promise<IUser | null> {
 
-        if (birthday === undefined) {
-            birthday = "";
-        }
-
-        if (picture === undefined) {
-            picture = "";
-        }
-
         const user = new User();
         user.firstname = firstname;
         user.lastname = lastname;
-        user.birthday = birthday;
+        user.birthday = birthday || "";
         user.email = email;
         user.address = address;
         user.role = role;
         user.isActive = isActive;
-        user.picture = picture;
+        user.picture = picture || "";
 
-        const isValidate = validate(user).then((errors:any) => {
-            // errors is an array of validation errors
-            if (errors.length > 0) {
-                console.log('validation failed. errors: ', errors);
-                return JSON.stringify(errors);
-            } else {
-                console.log('validation succeed');
-                return "success";
-            }
-        });
+        const errors = await validate(user);
+        
+        // errors is an array of validation errors
+        if (errors.length > 0) return null;
+       
+        const body = {...user, _id: id};
 
-        if (isValidate === "success") {
-            const body = {
-                firstname: user.firstname,
-                lastname: user.lastname,
-                birthday: user.birthday,
-                email: user.email,
-                address: user.address,
-                role: user.role,
-                isActive: user.isActive,
-                picture: user.picture
-            };
-    
-            await UserModel.updateOne({ _id: id }, body);
-            return await UserModel.findById(id);
-        } else {
-            return isValidate;
-        }
+        await UserModel.updateOne({ _id: id }, body);
+        return await UserModel.findById(id);
+        
     }
 
     @Mutation(returns => User)
