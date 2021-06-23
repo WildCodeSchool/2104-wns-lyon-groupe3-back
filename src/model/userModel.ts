@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+import { Address } from "./graphql/User";
 
 const Schema = mongoose.Schema;
 
@@ -9,7 +10,7 @@ export interface IUser extends Document {
     birthday: string,
     email: string,
     password: string,
-    address: string,
+    address: Address,
     role: string,
     isActive: string,
     picture: string
@@ -23,7 +24,7 @@ const UserSchema = new Schema(
         birthday: String,
         email: { type: String, required: true, unique: true },
         password: { type: String },
-        address: String,
+        address: Address,
         role: { type: String, enum: ['STUDENT', 'TEACHER', 'ADMINISTRATIVE'], default: 'STUDENT', required: true },
         isActive: { type: String, enum: ['ACTIVE', 'BLOCKED'], default: 'ACTIVE', required: true },
         picture: String

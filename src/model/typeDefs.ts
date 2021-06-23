@@ -8,7 +8,7 @@ export const TYPE_DEFS = gql`
         birthday: String
         email: String
         password: String
-        address: String
+        address: [Address]
         role: String
         isActive: String
         picture: String
@@ -17,12 +17,19 @@ export const TYPE_DEFS = gql`
         legalRepresentative: [LegalRepresentative]
     }
 
+    type Address {
+        id: ID
+        street: String
+        postalCode: String
+        city: String
+    }
+
     type LegalRepresentative {
         id: ID
         firstname: String
         lastname: String
         email: String
-        address: String
+        address: [Address]
         phone: String
     }
 
@@ -77,7 +84,7 @@ export const TYPE_DEFS = gql`
             birthday: String,
             email: String!,
             password: String!,
-            address: String!,
+            address: Array!,
             role: String!,
             isActive: String!,
             picture: String

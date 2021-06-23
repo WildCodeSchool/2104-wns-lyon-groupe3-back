@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { IsEmail,  Length, MinLength, MaxLength } from "class-validator";
-import { Field, ID, ObjectType } from "type-graphql";
+import { IsPostalCode, IsEmail,  Length, IsArray } from "class-validator";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
 import 'reflect-metadata';
+import { IUser } from "../userModel";
+import { Address } from "./Address";
 
 @ObjectType()
 export class User {
@@ -28,8 +30,9 @@ export class User {
     @Field(type=>String)
     password = "";
 
-    @Field(type=>String)
-    address = "";
+    // @IsArray()
+    @Field(type => Address, { nullable: true })
+    address = null;
 
     @Field(type=>String)
     role = "STUDENT";
