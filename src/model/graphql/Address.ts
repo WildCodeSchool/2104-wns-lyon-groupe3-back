@@ -1,15 +1,17 @@
-import { IsPostalCode, IsEmail,  Length, IsArray } from "class-validator";
-import { Field, ID, InputType, ObjectType } from "type-graphql";
+import { IsPostalCode } from "class-validator";
+import { Field, InputType, ObjectType } from "type-graphql";
 import 'reflect-metadata';
 
-@InputType()
+@ObjectType()
+@InputType("addressInput")
 export class Address {
-    @Field(type=>String)
-    street = "";
+    @Field()
+    street : string;
 
-    @Field(type=>String)
-    postalCode = "";
+    @IsPostalCode("FR")
+    @Field()
+    postalCode : string;
 
-    @Field(type=>String)
-    city = "";
+    @Field()
+    city : string;
 }
