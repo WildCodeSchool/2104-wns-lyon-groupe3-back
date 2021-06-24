@@ -31,6 +31,36 @@ const GET_USER_BY_ID = gql`
     }
 `;
 
+const GET_USER_BY_EMAIL = gql`
+    query getUserByEmail($email: String!) {
+        getUserByEmail(email: $email) {_id, email}
+    }
+`;
+
+const GET_USER_BY_ROLE = gql`
+    query getUserByRole($role: String!) {
+        getUserByRole(role: $role) {_id, role}
+    }
+`;
+
+const GET_USER_BY_ISACTIVE = gql`
+    query getUserByIsActive($isActive: String!) {
+        getUserByIsActive(isActive: $isActive) {_id, isActive}
+    }
+`;
+
+const GET_USER_BY_FIRSTNAME = gql`
+    query getUserByFirstname($firstname: String!) {
+        getUserByFirstname(firstname: $firstname) {_id, firstname}
+    }
+`;
+
+const GET_USER_BY_LASTNAME = gql`
+    query getUserByLastname($lastname: String!) {
+        getUserByLastname(lastname: $lastname) {_id, lastname}
+    }
+`;
+
 const CREATE_USER = gql`
     mutation createUser(
         $firstname: String!,
@@ -115,8 +145,9 @@ describe(
         afterEach(
             async () => {
                 // on vide toutes les collections après chaque test, comme ça on 
-                // ne dépend pas de l'ordre d'éxécution des tests
+                // ne dépend pas de l'ordre d'exécution des tests
                 const collections = mongoose.connection.collections;
+                // console.log(collections);
                 for (const key in collections) {
                     await mongoose.connection.db.collection(key).deleteMany({});
                 }
@@ -163,6 +194,66 @@ describe(
                 const res2 = await query({ query: GET_USER_BY_ID, variables: { id: res1.data.createUser._id } });
 
                 expect(res1.data.createUser._id).toEqual(res2.data.getUserById._id);
+            }
+        )
+
+        it(
+            'We should get the user associated to the email',
+            async () => {
+                const { query, mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await query({ query: GET_USER_BY_EMAIL, variables: { email: res1.data.createUser.email } });
+
+                expect(res1.data.createUser.email).toEqual(res2.data.getUserByEmail.email);
+            }
+        )
+
+        it(
+            'We should get the user associated to the role',
+            async () => {
+                const { query, mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await query({ query: GET_USER_BY_ROLE, variables: { role: res1.data.createUser.role } });
+
+                expect(res1.data.createUser.role).toEqual(res2.data.getUserByRole.role);
+            }
+        )
+
+        it(
+            'We should get the user associated to the isActive',
+            async () => {
+                const { query, mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await query({ query: GET_USER_BY_ISACTIVE, variables: { isActive: res1.data.createUser.isActive } });
+
+                expect(res1.data.createUser._id).toEqual(res2.data.getUserByIsActive.isActive);
+            }
+        )
+
+        it(
+            'We should get the user associated to the firstname',
+            async () => {
+                const { query, mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await query({ query: GET_USER_BY_FIRSTNAME, variables: { firstname: res1.data.createUser.firstname } });
+
+                expect(res1.data.createUser.firstname).toEqual(res2.data.getUserByFirstname.firstname);
+            }
+        )
+
+        it(
+            'We should get the user associated to the lastname',
+            async () => {
+                const { query, mutate } = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res2 = await query({ query: GET_USER_BY_LASTNAME, variables: { lastname: res1.data.createUser.lastname } });
+
+                expect(res1.data.createUser.lastname).toEqual(res2.data.getUserByLastname.lastname);
             }
         )
 
