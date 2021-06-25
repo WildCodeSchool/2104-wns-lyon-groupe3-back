@@ -3,7 +3,7 @@ import { Address } from "./graphql/Address";
 
 const Schema = mongoose.Schema;
 
-const subSchema = new Schema({
+export const subSchema = new Schema({
     street: String,
     postalCode: String,
     city: String

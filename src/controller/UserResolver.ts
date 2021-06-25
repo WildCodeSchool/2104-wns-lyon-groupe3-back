@@ -86,14 +86,13 @@ export class UserResolver {
 
         if (errors.length > 0) return null;
         
-        const body = {...user, _id: null, password: passHash};
+        const body = {...user, _id: undefined, password: passHash};
 
         UserModel.init();
 
         const model = new UserModel(body);
         const result = model.save();
         return result;
-        return null;
     }
 
     @Mutation(returns => User, { nullable: true })

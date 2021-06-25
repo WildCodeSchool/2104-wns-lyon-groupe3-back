@@ -16,7 +16,11 @@ const data = {
     firstname: "Pierre",
     lastname: "Caillou",
     email: "pierrefeuilleciseaux@gneugneu.com",
-    address: "1 rue de la roche",
+    address: {
+        street: "15 rue de la paix",
+        postalCode: "14000",
+        city: "Caen"
+    },
     role: "STUDENT",
     isActive: "ACTIVE",
     birthday: "",
@@ -37,27 +41,27 @@ const GET_USER_BY_EMAIL = gql`
     }
 `;
 
-const GET_USER_BY_ROLE = gql`
-    query getUserByRole($role: String!) {
-        getUserByRole(role: $role) {_id, role}
+const GET_USERS_BY_ROLE = gql`
+    query getUsersByRole($role: String!) {
+        getUsersByRole(role: $role) {_id, role}
     }
 `;
 
-const GET_USER_BY_ISACTIVE = gql`
-    query getUserByIsActive($isActive: String!) {
-        getUserByIsActive(isActive: $isActive) {_id, isActive}
+const GET_USERS_BY_ISACTIVE = gql`
+    query getUsersByIsActive($isActive: String!) {
+        getUsersByIsActive(isActive: $isActive) {_id, isActive}
     }
 `;
 
-const GET_USER_BY_FIRSTNAME = gql`
-    query getUserByFirstname($firstname: String!) {
-        getUserByFirstname(firstname: $firstname) {_id, firstname}
+const GET_USERS_BY_FIRSTNAME = gql`
+    query getUsersByFirstname($firstname: String!) {
+        getUsersByFirstname(firstname: $firstname) {_id, firstname}
     }
 `;
 
-const GET_USER_BY_LASTNAME = gql`
-    query getUserByLastname($lastname: String!) {
-        getUserByLastname(lastname: $lastname) {_id, lastname}
+const GET_USERS_BY_LASTNAME = gql`
+    query getUsersByLastname($lastname: String!) {
+        getUsersByLastname(lastname: $lastname) {_id, lastname}
     }
 `;
 
@@ -66,7 +70,7 @@ const CREATE_USER = gql`
         $firstname: String!,
         $lastname: String!,
         $email: String!,
-        $address: String!,
+        $address: addressInput!,
         $role: String,
         $isActive: String,
         $birthday: String,
@@ -82,7 +86,7 @@ const CREATE_USER = gql`
             birthday: $birthday,
             picture: $picture
         ) {
-            _id, firstname, lastname, email, address, role, isActive, birthday, picture
+            _id, firstname, lastname, email, address{street, postalCode, city}, role, isActive, birthday, picture
         }
     }
 `;
@@ -93,7 +97,7 @@ const UPDATE_USER = gql`
         $firstname: String!,
         $lastname: String!,
         $email: String!,
-        $address: String!,
+        $address: addressInput!,
         $role: String,
         $isActive: String,
         $birthday: String,
@@ -110,7 +114,7 @@ const UPDATE_USER = gql`
             birthday: $birthday,
             picture: $picture
         ) {
-            _id, firstname, lastname, email, address, role, isActive, birthday, picture
+            _id, firstname, lastname, email, address{street, postalCode, city}, role, isActive, birthday, picture
         }
     }
 `;
@@ -118,7 +122,7 @@ const UPDATE_USER = gql`
 const DELETE_USER = gql`
     mutation deleteUser($id: String!) {
         deleteUser(id: $id) {
-            _id, firstname, lastname, email, address, role, isActive, birthday, picture
+            _id, firstname, lastname, email, address{street, postalCode, city}, role, isActive, birthday, picture
         }
     }
 `;
@@ -210,50 +214,58 @@ describe(
         )
 
         it(
-            'We should get the user associated to the role',
+            'We should get the users associated to the role',
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data });
-                const res2 = await query({ query: GET_USER_BY_ROLE, variables: { role: res1.data.createUser.role } });
-
-                expect(res1.data.createUser.role).toEqual(res2.data.getUserByRole.role);
+                const res2 = await query({ query: GET_USERS_BY_ROLE, variables: { role: res1.data.createUser.role } });
+                const users = res2.data.getUsersByRole;
+                users.map((user) => (
+                    expect(res1.data.createUser.role).toEqual(user.role)
+                ))
             }
         )
 
         it(
-            'We should get the user associated to the isActive',
+            'We should get the users associated to the isActive',
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data });
-                const res2 = await query({ query: GET_USER_BY_ISACTIVE, variables: { isActive: res1.data.createUser.isActive } });
-
-                expect(res1.data.createUser._id).toEqual(res2.data.getUserByIsActive.isActive);
+                const res2 = await query({ query: GET_USERS_BY_ISACTIVE, variables: { isActive: res1.data.createUser.isActive } });
+                const users = res2.data.getUsersByIsActive;
+                users.map((user) => (
+                    expect(res1.data.createUser.isActive).toEqual(user.isActive)
+                ))
             }
         )
 
         it(
-            'We should get the user associated to the firstname',
+            'We should get the users associated to the firstname',
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data });
-                const res2 = await query({ query: GET_USER_BY_FIRSTNAME, variables: { firstname: res1.data.createUser.firstname } });
-
-                expect(res1.data.createUser.firstname).toEqual(res2.data.getUserByFirstname.firstname);
+                const res2 = await query({ query: GET_USERS_BY_FIRSTNAME, variables: { firstname: res1.data.createUser.firstname } });
+                const users = res2.data.getUsersByFirstname;
+                users.map((user) => (
+                    expect(res1.data.createUser.firstname).toEqual(user.firstname)
+                ))
             }
         )
 
         it(
-            'We should get the user associated to the lastname',
+            'We should get the users associated to the lastname',
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data });
-                const res2 = await query({ query: GET_USER_BY_LASTNAME, variables: { lastname: res1.data.createUser.lastname } });
-
-                expect(res1.data.createUser.lastname).toEqual(res2.data.getUserByLastname.lastname);
+                const res2 = await query({ query: GET_USERS_BY_LASTNAME, variables: { lastname: res1.data.createUser.lastname } });
+                const users = res2.data.getUsersByLastname;
+                users.map((user) => (
+                    expect(res1.data.createUser.lastname).toEqual(user.lastname)
+                ))
             }
         )
 
@@ -280,7 +292,11 @@ describe(
                     firstname: "Seb",
                     lastname: "Promènelechien",
                     email: "sebaimesonchien@gneugneu.com",
-                    address: "1 rue du ptit chiot trop mimi <3",
+                    address: {
+                        "street": "15 rue de la paix",
+                        "postalCode": "14000",
+                        "city": "Caen"
+                    },
                     role: "STUDENT",
                     isActive: "ACTIVE",
                     birthday: "",
