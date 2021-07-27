@@ -1,6 +1,12 @@
 import { gql } from "apollo-server-core";
 
 export const TYPE_DEFS = gql`
+    type addressInput {
+        street: String!,
+        postalCode: String!,
+        city: String!
+    }
+
     type User {
         id: ID
         firstname: String
@@ -8,7 +14,7 @@ export const TYPE_DEFS = gql`
         birthday: String
         email: String
         password: String
-        address: String
+        address: addressInput
         role: String
         isActive: String
         picture: String
@@ -17,12 +23,19 @@ export const TYPE_DEFS = gql`
         legalRepresentative: [LegalRepresentative]
     }
 
+    type Address {
+        id: ID
+        street: String
+        postalCode: String
+        city: String
+    }
+
     type LegalRepresentative {
         id: ID
         firstname: String
         lastname: String
         email: String
-        address: String
+        address: [Address]
         phone: String
     }
 
@@ -65,7 +78,22 @@ export const TYPE_DEFS = gql`
         message: String
     }
 
+
     type Query {
         allUsers: [User]
+    }
+
+    type Mutation {
+        createUser(
+            firstname: String!,
+            lastname: String!,
+            birthday: String,
+            email: String!,
+            password: String!,
+            address: Array!,
+            role: String!,
+            isActive: String!,
+            picture: String
+        ): User
     }
 `;
