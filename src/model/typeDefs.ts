@@ -7,6 +7,14 @@ export const TYPE_DEFS = gql`
         city: String!
     }
 
+    type courseDateInput {
+        teacher: User,
+        matter: String,
+        day: String,
+        startHour: String,
+        endHour: String
+    }
+
     type User {
         id: ID
         firstname: String
