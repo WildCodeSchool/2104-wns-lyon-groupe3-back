@@ -109,16 +109,18 @@ export class UserResolver {
     ): Promise<IUser | null> {
 
         const currentUser:any = await UserModel.findById(id);
+        console.log("current", currentUser);
 
         const user = new User();
-        user.firstname = firstname;
-        user.lastname = lastname;
-        user.birthday = birthday || "";
-        user.email = email;
-        user.address = address;
-        user.role = role;
-        user.isActive = isActive;
-        user.picture = picture || "";
+        user.firstname = firstname !== currentUser.firstname ? firstname : currentUser.firstname;
+        user.lastname = lastname !== currentUser.lastname ? lastname : currentUser.lastname;
+        user.birthday = birthday !== currentUser.birthday ? birthday : currentUser.birthday;
+        user.email = email !== currentUser.email ? email : currentUser.email;
+        user.address = address !== currentUser.address ? address : currentUser.address;
+        user.role = role !== currentUser.role ? role : currentUser.role;
+        user.isActive = isActive !== currentUser.isActive ? isActive : currentUser.isActive;
+        user.picture = picture !== currentUser.picture ? picture : currentUser.picture;
+        console.log("user", user);
 
         const errors = await validate(user);
         
@@ -126,7 +128,9 @@ export class UserResolver {
         if (errors.length > 0) return null;
        
         //TODO value of password will be changed when we will manage the modification of it
+        console.log("id", id);
         const body = {...user, _id: id, password: currentUser.password};
+        console.log("BODY", body);
 
         await UserModel.updateOne(body);
         return await UserModel.findById(id);
