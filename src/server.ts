@@ -7,11 +7,12 @@ import mongoose from "mongoose";
 import { GraphQLSchema } from "graphql";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./controller/UserResolver";
+import { ClassResolver } from "./controller/ClassResolver";
 
 export async function init(config: any): Promise<any> {
     const schema: GraphQLSchema = await buildSchema(
         {
-            resolvers: [UserResolver]
+            resolvers: [UserResolver, ClassResolver]
         }
     );
 

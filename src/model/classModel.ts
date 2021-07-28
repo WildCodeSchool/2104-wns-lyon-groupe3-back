@@ -1,8 +1,19 @@
 import mongoose, { Document } from "mongoose";
 import { User } from "./graphql/User";
+import { UserSchema } from "./userModel";
 import { CourseDate } from "./graphql/CourseDate";
 
 const Schema = mongoose.Schema;
+
+const CourseDateSchema = new Schema(
+    {
+        teacher: UserSchema,
+        matter: String,
+        day: String,
+        startHour: String,
+        endHour: String,
+    }
+)
 
 export interface IClass extends Document{
     id: string,
@@ -19,9 +30,9 @@ const ClassSchema = new Schema(
         id: String,
         name: String,
         link: String,
-        timetable: [CourseDate],
-        princpalTeacher: User,
-        classRepresentative: [User]
+        timetable: [CourseDateSchema],
+        princpalTeacher: UserSchema,
+        classRepresentative: [UserSchema]
     }
 )
 
