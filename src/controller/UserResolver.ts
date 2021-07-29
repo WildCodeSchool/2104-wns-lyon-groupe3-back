@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Arg, Query, Resolver, Mutation, FieldResolver, ObjectType } from "type-graphql";
+import { Arg, Query, Resolver, Mutation } from "type-graphql";
 import { User } from "../model/graphql/User";
 import { Address } from "../model/graphql/Address";
 import UserModel, { IUser } from "../model/userModel";
 import bcrypt from 'bcrypt';
 import generator from 'generate-password';
-const { validate } = require("class-validator");
+import { validate } from "class-validator";
 import 'reflect-metadata';
 
 @Resolver(User)
@@ -112,14 +112,14 @@ export class UserResolver {
         console.log("current", currentUser);
 
         const user = new User();
-        user.firstname = firstname !== currentUser.firstname ? firstname : currentUser.firstname;
-        user.lastname = lastname !== currentUser.lastname ? lastname : currentUser.lastname;
-        user.birthday = birthday !== currentUser.birthday ? birthday : currentUser.birthday;
-        user.email = email !== currentUser.email ? email : currentUser.email;
-        user.address = address !== currentUser.address ? address : currentUser.address;
-        user.role = role !== currentUser.role ? role : currentUser.role;
-        user.isActive = isActive !== currentUser.isActive ? isActive : currentUser.isActive;
-        user.picture = picture !== currentUser.picture ? picture : currentUser.picture;
+        user.firstname = firstname !== currentUser?.firstname ? firstname : currentUser?.firstname;
+        user.lastname = lastname !== currentUser?.lastname ? lastname : currentUser?.lastname;
+        user.email = email !== currentUser?.email ? email : currentUser?.email;
+        user.address = address !== currentUser?.address ? address : currentUser?.address;
+        user.role = role !== currentUser?.role ? role : currentUser?.role;
+        user.isActive = isActive !== currentUser?.isActive ? isActive : currentUser?.isActive;
+        user.birthday = birthday !== currentUser?.birthday ? birthday : currentUser?.birthday;
+        user.picture = picture !== currentUser?.picture ? picture : currentUser?.picture;
         console.log("user", user);
 
         const errors = await validate(user);
@@ -129,12 +129,11 @@ export class UserResolver {
        
         //TODO value of password will be changed when we will manage the modification of it
         console.log("id", id);
-        const body = {...user, _id: id, password: currentUser.password};
+        const body = {...user, _id: id, password: currentUser?.password};
         console.log("BODY", body);
 
-        await UserModel.updateOne(body);
+        await UserModel.findById(id).update(body);
         return await UserModel.findById(id);
-        
     }
 
     @Mutation(returns => User, { nullable: true })
