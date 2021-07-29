@@ -5,9 +5,8 @@ import { gql } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
-import { createTestClient } from 'apollo-server-testing';
-// import UserModel from "../model/userModel";
 import { ClassResolver } from "./ClassResolver";
+const { createTestClient } = require('apollo-server-testing');
 
 const Class = new ClassResolver();
 
@@ -33,6 +32,7 @@ mutation createClass(
       name: $name
       link: $link
     ) {
+      _id  
       name
       link
     }
@@ -84,6 +84,18 @@ describe(
 
                 expect(res.data.getAllClass).toBeDefined();
                 expect(res.data.getAllClass.length).toEqual(count)
+            }
+        )
+
+        it(
+            "Should get the class associate to the Id",
+            async ()=>{
+                const {query, mutate} = createTestClient(apollo);
+
+                const res1 = await mutate({ query: CREATE_CLASS, variables: data});
+                const res2 = await query({ query: GET_CLASS_BY_ID, variables: {id: res1.data.createClass._id}});
+
+                expect(res1.data.createClass._id).toEqual(res2.data.getClassById._id);
             }
         )
 
