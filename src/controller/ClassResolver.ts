@@ -10,7 +10,7 @@ import { ValidationError } from "apollo-server";
 @Resolver(Class)
 export class ClassResolver{
     @Query(returns => [Class])
-    public async getAllClass(): Promise<Array<IClass | null>> {
+    public async getAllClasses(): Promise<Array<IClass | null>> {
         const data = await ClassModel.find();
         return data;
     }
@@ -18,6 +18,11 @@ export class ClassResolver{
     @Query(returns => Class, {nullable: true})
     public async getClassById(@Arg('id', type => String) id: string): Promise<IClass | null>{
         return await ClassModel.findById(id);
+    }
+    
+    @Query(returns => [Class], {nullable: true})
+    public async getClassesByName(@Arg('name', type => String) name: string): Promise<IClass[] | null>{
+        return await ClassModel.find({name: name});
     }
 
     @Mutation(returns => Class, {nullable: true})

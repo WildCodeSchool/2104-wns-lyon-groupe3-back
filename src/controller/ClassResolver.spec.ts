@@ -15,7 +15,7 @@ const data = {
     link: "https://meet.google.com/rdq-epim-wnb"
 };
 
-const GET_ALL_CLASSES = gql`{getAllClass{_id, name, link}}`;
+const GET_ALL_CLASSES = gql`{getAllClasses{_id, name, link}}`;
 
 const GET_CLASS_BY_ID = gql`
     query getClassById($id: String!) {
@@ -76,14 +76,14 @@ describe(
         it(
             "Should get the same number of objects in the Resolver than in the query",
             async ()=>{
-                const allClasses = await Class.getAllClass();
+                const allClasses = await Class.getAllClasses();
                 const count = allClasses.length;
 
                 const { query } = createTestClient(apollo);
                 const res = await query({ query: GET_ALL_CLASSES });
 
-                expect(res.data.getAllClass).toBeDefined();
-                expect(res.data.getAllClass.length).toEqual(count)
+                expect(res.data.getAllClasses).toBeDefined();
+                expect(res.data.getAllClasses.length).toEqual(count)
             }
         )
 
