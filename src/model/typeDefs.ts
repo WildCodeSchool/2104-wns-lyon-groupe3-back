@@ -1,18 +1,42 @@
 import { gql } from "apollo-server-core";
 
 export const TYPE_DEFS = gql`
-    type addressInput {
+    input addressInput {
         street: String!,
         postalCode: String!,
         city: String!
     }
 
-    type courseDateInput {
+    input courseDateInput {
         teacher: User,
         matter: String,
         day: String,
         startHour: String,
         endHour: String
+    }
+
+    type CourseDate {
+        teacher: User,
+        matter: String,
+        day: String,
+        startHour: String,
+        endHour: String
+    }
+
+    input userInput{
+        id: ID
+        firstname: String
+        lastname: String
+        birthday: String
+        email: String
+        password: String
+        address: addressInput
+        role: String
+        isActive: String
+        picture: String
+        classes: [Class]
+        class: Class
+        legalRepresentative: [LegalRepresentative]
     }
 
     type User {
@@ -51,9 +75,9 @@ export const TYPE_DEFS = gql`
         id: ID
         name: String
         link: String
-        timetable: [CourseDate]
+        timetable: CourseDate[]
         principalTeacher: User
-        classRepresentative: [User]
+        classRepresentative: User[]
     }
 
     type CourseDate {

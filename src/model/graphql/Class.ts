@@ -1,5 +1,5 @@
 import { Length, IsArray } from "class-validator";
-import { emitSchemaDefinitionFileSync, Field, ID, ObjectType } from "type-graphql";
+import { Field, ID, ObjectType } from "type-graphql";
 import { IClass } from "../classModel";
 import { CourseDate } from "./CourseDate";
 import { User } from "./User";
@@ -15,18 +15,17 @@ export class Class {
     @Length(1, 64)
     name = "";
 
-    //@IsDate()
-    @Field(type=>String)
+    @Field(type=>String, {nullable:true})
     link = "";
 
     @IsArray()
-    @Field(type=>[CourseDate])
-    timetable = [];
+    @Field(type=>CourseDate, {nullable:true})
+    timetable : CourseDate[];
 
-    @Field(type=>User)
-    principalTeacher;
+    @Field(type=>User, {nullable:true})
+    principalTeacher : User;
 
     @IsArray()
-    @Field(type=>[User])
-    classRepresentative = [];
+    @Field(type=>User, {nullable:true})
+    classRepresentative : User[];
 }

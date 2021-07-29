@@ -6,44 +6,41 @@ import { IUser } from "../userModel";
 import { Address } from "./Address";
 
 @ObjectType()
+@InputType("userInput")
 export class User {
 
     @Field(type=>ID)
-    _id = "";
+    _id : string;
 
     @Field(type => String)
     @Length(1, 64)
-    firstname = "";
+    firstname :string;
 
     @Field(type => String)
     @Length(1, 64)
-    lastname = "";
+    lastname : string;
 
     //@IsDate()
     @Field(type=>String, {nullable: true})
-    birthday = "";
+    birthday : string;
 
     @IsEmail()
     @Field(type=>String)
-    email = "";
+    email : string;
 
     @Field(type=>String)
-    password = "";
+    password : string;
 
     // @IsArray()
     @Field(()=> Address)
-    address = {
-        street : "",
-        postalCode : "",
-        city : ""
-    };
+    address : Address;
 
-    @Field(type=>String)
-    role = "STUDENT";
+    @Field(type=>String, {defaultValue: "STUDENT"})
+    role :string;
 
-    @Field(type=>String)
-    isActive = "ACTIVE";
+    @Field(type=>String, {defaultValue:"ACTIVE"})
+    isActive: string;
 
     @Field(type=>String, {nullable: true})
-    picture = "";
+    picture : string
 }

@@ -24,6 +24,6 @@ export async function init(config: any): Promise<any> {
 
     await mongoose.connect(config.db, config.options);
 
-    console.log("Mongodb Started & Apollo server started at: http://localhost:4000/");
+    console.log("Mongodb & Apollo server started at: http://localhost:4000/");
     return server;
 }
