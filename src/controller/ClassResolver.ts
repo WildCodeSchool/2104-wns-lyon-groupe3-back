@@ -1,10 +1,11 @@
-import { Arg, Query, Resolver, Mutation, FieldResolver, ObjectType, Args } from "type-graphql";
+import { Arg, Query, Resolver, Mutation } from "type-graphql";
 import { Class } from "../model/graphql/Class";
 import { CourseDate } from "../model/graphql/CourseDate";
 import ClassModel, { IClass } from "../model/classModel";
 import { validate } from "class-validator";
 import 'reflect-metadata';
 import { User } from "../model/graphql/User";
+import { ValidationError } from "apollo-server";
 
 @Resolver(Class)
 export class ClassResolver{
@@ -22,10 +23,10 @@ export class ClassResolver{
     @Mutation(returns => Class, {nullable: true})
     public async createClass(
         @Arg("name") name: string,
-        @Arg("link") link: string,
-        @Arg("timetable", ()=> CourseDate) timetable: CourseDate[],
-        @Arg("principalTeacher") principalTeacher: User,
-        @Arg("classRepresentative", ()=>User) classReprensentative: User[],
+        @Arg("link", {nullable:true}) link: string,
+        @Arg("timetable", ()=> CourseDate, {nullable: true}) timetable: CourseDate[],
+        @Arg("principalTeacher", {nullable: true}) principalTeacher: User,
+        @Arg("classRepresentative", ()=>User, {nullable: true}) classReprensentative: User[],
     ): Promise<IClass | null>{
         const newClass = new Class();
         
@@ -37,7 +38,10 @@ export class ClassResolver{
 
         const errors = await validate(newClass);
 
-        if (errors.length>0) return null;
+        if (errors.length>0){
+            console.log(errors);
+            return null;
+        } 
 
         const body = {...newClass, _id: undefined};
 

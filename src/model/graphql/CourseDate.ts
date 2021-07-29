@@ -13,11 +13,11 @@ export class CourseDate {
     matter : string;
 
     @Field()
-    day: string;
+    day : string;
 
     @Field()
     startHour : string;
 
     @Field()
-    endHour: string;
+    endHour : string;
 }
