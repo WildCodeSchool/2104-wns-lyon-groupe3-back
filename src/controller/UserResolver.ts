@@ -132,7 +132,7 @@ export class UserResolver {
         const body = {...user, _id: id, password: currentUser.password};
         console.log("BODY", body);
 
-        await UserModel.updateOne(body);
+        await UserModel.findById(id).update(body);
         return await UserModel.findById(id);
         
     }
