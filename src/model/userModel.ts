@@ -22,7 +22,7 @@ export interface IUser extends Document {
     picture: string
 }
 
-const UserSchema = new Schema(
+export const UserSchema = new Schema(
     {
         id: String,
         firstname: { type: String, required: true },
