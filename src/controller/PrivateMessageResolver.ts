@@ -17,14 +17,14 @@ export class PrivateMessageResolver{
     @Mutation(returns => PrivateMessage, {nullable: true})
     public async createPrivateMessage(
         @Arg("author") author: string,
-        @Arg("recipient", ()=> Recipient, {nullable: true}) recipient: Recipient[],
+        @Arg("recipients", () => [Recipient], {nullable: true}) recipients: [Recipient],
         @Arg("object", {nullable:true}) object: string,
         @Arg("message") message: string,
     ): Promise<IPrivateMessage | null>{
         const newPrivateMessage = new PrivateMessage();
         
         newPrivateMessage.author = author;
-        newPrivateMessage.recipient = recipient;
+        newPrivateMessage.recipients = recipients;
         newPrivateMessage.object = object;
         newPrivateMessage.message = message;
 

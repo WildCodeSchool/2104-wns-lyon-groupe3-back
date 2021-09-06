@@ -11,7 +11,7 @@ const RecipientSchema = new Schema(
 
 export interface IPrivateMessage extends Document {
     author: string,
-    recipient: [Recipient], 
+    recipients: [Recipient], 
     object: string,
     message: string,
 }
@@ -19,7 +19,7 @@ export interface IPrivateMessage extends Document {
 export const PrivateMessageSchema = new Schema(
     {
         author: { type: String, required: true },
-        recipient: { type: [RecipientSchema], required: true },
+        recipients: { type: [RecipientSchema], required: true },
         object: String,
         message: { type: String, required: true },
     }

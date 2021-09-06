@@ -7,4 +7,5 @@ export class Recipient {
 
     @Field()
     userId: string;
+
 }

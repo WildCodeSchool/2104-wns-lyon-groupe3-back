@@ -9,7 +9,7 @@ export class PrivateMessage {
     author : string;
 
     @Field(type=>Recipient)
-    recipient : Recipient[];
+    recipients : Recipient[];
 
     @Field()
     object : string;
