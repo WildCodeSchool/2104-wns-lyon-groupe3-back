@@ -8,11 +8,12 @@ import { GraphQLSchema } from "graphql";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./controller/UserResolver";
 import { ClassResolver } from "./controller/ClassResolver";
+import { PrivateMessageResolver } from "./controller/PrivateMessageResolver";
 
 export async function init(config: any): Promise<any> {
     const schema: GraphQLSchema = await buildSchema(
         {
-            resolvers: [UserResolver, ClassResolver]
+            resolvers: [UserResolver, ClassResolver, PrivateMessageResolver]
         }
     );
 

@@ -39,6 +39,10 @@ export const TYPE_DEFS = gql`
         legalRepresentative: [LegalRepresentative]
     }
 
+    input recipientInput{
+        userId: String,
+    }
+
     type User {
         id: ID
         firstname: String
@@ -104,8 +108,8 @@ export const TYPE_DEFS = gql`
 
     type PrivateMessage {
         id: ID
-        author: User
-        recipient: [User]
+        author: String
+        recipient: Recipient[]
         object: String
         message: String
     }
@@ -127,5 +131,14 @@ export const TYPE_DEFS = gql`
             isActive: String!,
             picture: String
         ): User
+    }
+
+    type Mutation {
+        createPrivateMessage(
+            author: String!,
+            recipient: Recipient[]!,
+            object: String,
+            message: String!
+        ): PrivateMessage
     }
 `;
