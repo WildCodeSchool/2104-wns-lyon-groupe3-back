@@ -5,15 +5,15 @@ import { Recipient } from "./Recipient";
 @ObjectType()
 @InputType("privateMessageInput")
 export class PrivateMessage {
-    @Field()
+    @Field(type=>String)
     author : string;
 
     @Field(type=>[Recipient])
     recipients : Recipient[];
 
-    @Field()
+    @Field(type=>String, {nullable:true})
     object : string;
 
-    @Field()
+    @Field(type=>String)
     message : string;
 }
