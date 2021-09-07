@@ -16,17 +16,19 @@ export class PrivateMessageResolver{
 
     @Query(returns => [PrivateMessage])
     public async getAllPrivateMessageForUserReceiver(@Arg('userId', type => String) userId: string): Promise<Array<IPrivateMessage | null>> {
-        const received = await PrivateMessageModel.find();
-        // console.log(received);
-        received.map((message) => {
+        const messages = await PrivateMessageModel.find();
+        
+        const userMessages = messages.filter((message) => {
             const { recipients } = message;
-            recipients.map((rec) => {
-                const { userId } = rec;
-                console.log("rec :", rec)
+            const isRecipient = recipients.map((recipient) => {
+                if (recipient.userId === userId) {
+                    return true
+                }
             })
-        })
+            return isRecipient.includes(true) && message;
+        });
 
-        return received;
+        return userMessages;
     }
 
     @Mutation(returns => PrivateMessage, {nullable: true})
