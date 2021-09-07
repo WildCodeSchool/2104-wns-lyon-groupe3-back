@@ -8,7 +8,7 @@ export class PrivateMessage {
     @Field()
     author : string;
 
-    @Field(type=>Recipient)
+    @Field(type=>[Recipient])
     recipients : Recipient[];
 
     @Field()

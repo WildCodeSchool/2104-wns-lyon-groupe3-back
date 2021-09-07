@@ -17,7 +17,7 @@ export class PrivateMessageResolver{
     @Mutation(returns => PrivateMessage, {nullable: true})
     public async createPrivateMessage(
         @Arg("author") author: string,
-        @Arg("recipients", () => [Recipient], {nullable: true}) recipients: [Recipient],
+        @Arg("recipients", () => [Recipient]) recipients: Recipient[],
         @Arg("object", {nullable:true}) object: string,
         @Arg("message") message: string,
     ): Promise<IPrivateMessage | null>{
