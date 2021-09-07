@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 
 const CourseDateSchema = new Schema(
     {
-        teacher: UserSchema,
+        teacherId: String,
         matter: String,
         day: String,
         startHour: String,
@@ -20,8 +20,8 @@ export interface IClass extends Document{
     name: string,
     link: string,
     timetable: [CourseDate],
-    principalTeacher: User,
-    classRepresentative: [User]
+    principalTeacherId: string,
+    classRepresentativesIds: [string]
 
 }
 
@@ -31,8 +31,8 @@ const ClassSchema = new Schema(
         name: String,
         link: String,
         timetable: [CourseDateSchema],
-        princpalTeacher: UserSchema,
-        classRepresentative: [UserSchema]
+        princpalTeacherId: String,
+        classRepresentativesIds: [String]
     }
 )
 

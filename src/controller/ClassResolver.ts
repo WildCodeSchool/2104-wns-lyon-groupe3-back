@@ -29,17 +29,17 @@ export class ClassResolver{
     public async createClass(
         @Arg("name") name: string,
         @Arg("link", {nullable:true}) link: string,
-        @Arg("timetable", ()=> CourseDate, {nullable: true}) timetable: CourseDate[],
-        @Arg("principalTeacher", {nullable: true}) principalTeacher: User,
-        @Arg("classRepresentative", ()=>User, {nullable: true}) classReprensentative: User[],
+        @Arg("timetable", ()=> [CourseDate], {nullable: true}) timetable: CourseDate[],
+        @Arg("principalTeacherId", {nullable: true}) principalTeacherId: string,
+        @Arg("classRepresentativesIds", ()=>[String],{nullable: true}) classReprensentativesIds: string[],
     ): Promise<IClass | null>{
         const newClass = new Class();
         
         newClass.name = name;
         newClass.link = link;
         newClass.timetable = timetable;
-        newClass.principalTeacher = principalTeacher;
-        newClass.classRepresentative = classReprensentative;
+        newClass.principalTeacherId = principalTeacherId;
+        newClass.classRepresentativesIds = classReprensentativesIds;
 
         const errors = await validate(newClass);
 
