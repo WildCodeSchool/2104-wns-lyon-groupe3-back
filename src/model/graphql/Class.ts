@@ -1,7 +1,6 @@
 import { Length, IsArray } from "class-validator";
 import { Field, ID, ObjectType } from "type-graphql";
 import { CourseDate } from "./CourseDate";
-import { User } from "./User";
 import 'reflect-metadata';
 
 @ObjectType()
@@ -18,13 +17,13 @@ export class Class {
     link = "";
 
     // @IsArray()
-    @Field(type=>CourseDate, {nullable:true})
+    @Field(type=>[CourseDate], {nullable:true})
     timetable : CourseDate[];
 
-    @Field(type=>User, {nullable:true})
-    principalTeacher : User;
+    @Field(type=>String, {nullable:true})
+    principalTeacherId : string;
 
     // @IsArray()
-    @Field(type=>User, {nullable:true})
-    classRepresentative : User[];
+    @Field(type=>[String], {nullable:true})
+    classRepresentativesIds : string[];
 }
