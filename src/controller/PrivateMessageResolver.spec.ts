@@ -84,7 +84,7 @@ const GET_ALL_PRIVATE_MESSAGES_FOR_USER_SENDER = gql`
 const GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT = gql`
     query getAllPrivateMessagesForUserRecipient($userId: String!) {
         getAllPrivateMessagesForUserRecipient(userId: $userId) {
-            author, recipients { userId}, message
+            author, recipients { userId }, message
         }
     }
 `;
@@ -273,13 +273,12 @@ describe(
                 const recipient2 = await mutate({ query: CREATE_USER, variables: recipientData2 });
                 const userSender1 = await mutate({ query: CREATE_USER, variables: senderData1 });
                 const userSender2 = await mutate({ query: CREATE_USER, variables: senderData2 });
-                const allRecipients = [recipient1, recipient2];
 
                 const privateMessageData1 = {
                     author: userSender1.data.createUser._id,
                     recipients: [
                         { userId: recipient1.data.createUser._id },
-                        { userId: recipient2.data.createUser._id },
+                        { userId: recipient2.data.createUser._id }
                     ],
                     object: null,
                     message: "Salut comment ça va ?"
@@ -314,17 +313,17 @@ describe(
                 };
 
                 const privateMessageDatas = [privateMessageData1, privateMessageData2, privateMessageData3, privateMessageData4];
+                for (let i=0; i<privateMessageDatas.length; i++){
+                    const data = privateMessageDatas[i]
+                    await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: data });                  
+                }
 
-                await privateMessageDatas.map((data) => {
-                    return mutate({ query: CREATE_PRIVATE_MESSAGE, variables: data });
-                });
-                
                 const allRecipient1Messages = await mutate(
                     { 
                         query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, 
                         variables: { userId: recipient1.data.createUser._id } 
-                    })
-                ;
+                    }
+                );
 
                 const allRecipient2Messages = await mutate(
                     { 
@@ -332,29 +331,20 @@ describe(
                         variables: { userId: recipient2.data.createUser._id } 
                     }
                 );
-                
+
                 // Search the recipients' id for all the received messages
                 const received1 = allRecipient1Messages.data.getAllPrivateMessagesForUserRecipient;
-                received1.map((message) => {
-                    expect(message.recipients).toContainEqual({ userId: recipient1.data.createUser._id });
+                received1.map((messageReceived) => {
+                    expect(messageReceived.recipients).toContainEqual({ userId: recipient1.data.createUser._id });
+                    expect(privateMessageDatas.map((m)=>m.message)).toContain(messageReceived.message);
                 })
 
                 const received2 = allRecipient2Messages.data.getAllPrivateMessagesForUserRecipient;
-                received2.map((message) => {
-                    expect(message.recipients).toContainEqual({ userId: recipient2.data.createUser._id });
-                })
-                
-                //Compare the authors who sent and the userSender's id.
-                // expect(res1.data.createPrivateMessage.recipients).toContain(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[0]._id);
-                // expect(res2.data.createPrivateMessage.recipients).toContain(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[1].author);
-                // expect(res3.data.createPrivateMessage.recipients).toContain(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[2].author);
-                // expect(res4.data.createPrivateMessage.recipients).toContain(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[3].author);
 
-                //Compare the messages sent to the messages from userSender
-                // expect(res1.data.createPrivateMessage.message).toEqual(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[0].message);
-                // expect(res2.data.createPrivateMessage.message).toEqual(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[1].message);
-                // expect(res3.data.createPrivateMessage.message).toEqual(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[2].message);
-                // expect(res4.data.createPrivateMessage.message).toEqual(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[3].message);
+                received2.map((messageReceived) => {
+                    expect(messageReceived.recipients).toContainEqual({ userId: recipient2.data.createUser._id });
+                    expect(privateMessageDatas.map((m)=>m.message)).toContain(messageReceived.message);
+                })
             }
         )
     }

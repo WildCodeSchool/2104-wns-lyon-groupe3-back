@@ -5,6 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "init": "jest --init",
     "start": "npm run dev",
     "build": "tsc",
