@@ -273,6 +273,7 @@ describe(
                 const recipient2 = await mutate({ query: CREATE_USER, variables: recipientData2 });
                 const userSender1 = await mutate({ query: CREATE_USER, variables: senderData1 });
                 const userSender2 = await mutate({ query: CREATE_USER, variables: senderData2 });
+                const allRecipients = [recipient1, recipient2];
 
                 const privateMessageData1 = {
                     author: userSender1.data.createUser._id,
@@ -312,13 +313,25 @@ describe(
                     message: "Comment vous portez-vous?"
                 };
 
-                const res1 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData1 });
-                const res2 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData2 });
-                const res3 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData3 });
-                const res4 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData4 });
+                const privateMessageDatas = [privateMessageData1, privateMessageData2, privateMessageData3, privateMessageData4];
+
+                await privateMessageDatas.map((data) => {
+                    return mutate({ query: CREATE_PRIVATE_MESSAGE, variables: data });
+                });
                 
-                const allRecipient1Messages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, variables: { userId: recipient1.data.createUser._id } });
-                const allRecipient2Messages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, variables: { userId: recipient2.data.createUser._id } });
+                const allRecipient1Messages = await mutate(
+                    { 
+                        query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, 
+                        variables: { userId: recipient1.data.createUser._id } 
+                    })
+                ;
+
+                const allRecipient2Messages = await mutate(
+                    { 
+                        query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, 
+                        variables: { userId: recipient2.data.createUser._id } 
+                    }
+                );
                 
                 // Search the recipients' id for all the received messages
                 const received1 = allRecipient1Messages.data.getAllPrivateMessagesForUserRecipient;
