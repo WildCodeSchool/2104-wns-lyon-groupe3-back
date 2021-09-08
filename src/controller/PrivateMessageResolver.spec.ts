@@ -179,6 +179,7 @@ describe(
                 const userSender = await mutate({ query: CREATE_USER, variables: senderData1 });
                 const recipient1 = await mutate({ query: CREATE_USER, variables: recipientData1 });
                 const recipient2 = await mutate({ query: CREATE_USER, variables: recipientData2 });
+                const allRecipients = [ recipient1, recipient2 ];
 
                 const privateMessageData = {
                     author: userSender.data.createUser._id,
@@ -193,11 +194,11 @@ describe(
                 const res = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData });
 
                 expect(res.data.createPrivateMessage.author).toEqual(userSender.data.createUser._id);
-
-                expect(res.data.createPrivateMessage.recipients[0].userId).toEqual(recipient1.data.createUser._id);
-                expect(res.data.createPrivateMessage.recipients[1].userId).toEqual(recipient2.data.createUser._id);
-
                 expect(res.data.createPrivateMessage.message).toEqual(privateMessageData.message);
+
+                allRecipients.map((recipient) => {
+                    expect(res.data.createPrivateMessage.recipients).toContainEqual({ userId: recipient.data.createUser._id });
+                });
             }
         )
 
@@ -251,20 +252,14 @@ describe(
                 const res2 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData2 });
                 const res3 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData3 });
                 const res4 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData4 });
+                const allRes = [res1, res2, res3, res4];
                 
                 const allAuthoredMessages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_SENDER, variables: { author: userSender.data.createUser._id } });
-                
-                //Compare the authors who sent and the userSender's id.
-                expect(res1.data.createPrivateMessage.author).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[0].author);
-                expect(res2.data.createPrivateMessage.author).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[1].author);
-                expect(res3.data.createPrivateMessage.author).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[2].author);
-                expect(res4.data.createPrivateMessage.author).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[3].author);
 
-                //Compare the messages sent to the messages from userSender
-                expect(res1.data.createPrivateMessage.message).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[0].message);
-                expect(res2.data.createPrivateMessage.message).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[1].message);
-                expect(res3.data.createPrivateMessage.message).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[2].message);
-                expect(res4.data.createPrivateMessage.message).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[3].message);
+                allRes.map((res, id) => {
+                    expect(res.data.createPrivateMessage.author).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[id].author);
+                    expect(res.data.createPrivateMessage.message).toEqual(allAuthoredMessages.data.getAllPrivateMessagesForUserSender[id].message);
+                });
             }
         )
 
