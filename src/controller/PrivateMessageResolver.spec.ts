@@ -322,15 +322,19 @@ describe(
                 const res3 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData3 });
                 const res4 = await mutate({ query: CREATE_PRIVATE_MESSAGE, variables: privateMessageData4 });
                 
-                const allReceivedMessages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, variables: { userId: recipient1.data.createUser._id } });
+                const allRecipient1Messages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, variables: { userId: recipient1.data.createUser._id } });
+                const allRecipient2Messages = await mutate({ query: GET_ALL_PRIVATE_MESSAGES_FOR_USER_RECIPIENT, variables: { userId: recipient2.data.createUser._id } });
                 
-                // expect(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient).toEqual()
-                const received = allReceivedMessages.data.getAllPrivateMessagesForUserRecipient;
-                received.map((message) => {
-                    console.log("message recipients ---- ", message.recipients);
+                // Search the recipients' id for all the received messages
+                const received1 = allRecipient1Messages.data.getAllPrivateMessagesForUserRecipient;
+                received1.map((message) => {
                     expect(message.recipients).toContainEqual({ userId: recipient1.data.createUser._id });
                 })
 
+                const received2 = allRecipient2Messages.data.getAllPrivateMessagesForUserRecipient;
+                received2.map((message) => {
+                    expect(message.recipients).toContainEqual({ userId: recipient2.data.createUser._id });
+                })
                 
                 //Compare the authors who sent and the userSender's id.
                 // expect(res1.data.createPrivateMessage.recipients).toContain(allReceivedMessages.data.getAllPrivateMessagesForUserRecipient[0]._id);
