@@ -8,14 +8,14 @@ import 'reflect-metadata';
 @Resolver(PrivateMessage)
 export class PrivateMessageResolver{
     @Query(returns => [PrivateMessage])
-    public async getAllPrivateMessageForUserSender(@Arg('author', type => String) author: string): Promise<Array<IPrivateMessage | null>> {
+    public async getAllPrivateMessagesForUserSender(@Arg('author', type => String) author: string): Promise<Array<IPrivateMessage | null>> {
         //TODO REQUETE
         const test = await PrivateMessageModel.find({author: author});
         return test
     }
 
     @Query(returns => [PrivateMessage])
-    public async getAllPrivateMessageForUserReceiver(@Arg('userId', type => String) userId: string): Promise<Array<IPrivateMessage | null>> {
+    public async getAllPrivateMessagesForUserRecipient(@Arg('userId', type => String) userId: string): Promise<Array<IPrivateMessage | null>> {
         const messages = await PrivateMessageModel.find();
         
         const userMessages = messages.filter((message) => {

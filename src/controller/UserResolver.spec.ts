@@ -151,7 +151,6 @@ describe(
                 // on vide toutes les collections après chaque test, comme ça on 
                 // ne dépend pas de l'ordre d'exécution des tests
                 const collections = mongoose.connection.collections;
-                // console.log(collections);
                 for (const key in collections) {
                     await mongoose.connection.db.collection(key).deleteMany({});
                 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import "reflect-metadata";
 import { init } from '../server';
 import { config } from '../database/environment.testing';
