@@ -7,12 +7,8 @@ import { ApolloServer } from 'apollo-server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 const { createTestClient } = require('apollo-server-testing');
-// import { PrivateMessageResolver } from "./PrivateMessageResolver";
-// import { UserResolver } from "./UserResolver";
 
-// const PrivateMessage = new PrivateMessageResolver();
-// const User = new UserResolver();
-
+//#region Datas
 const senderData1 = {
     firstname: "Pierre",
     lastname: "Caillou",
@@ -72,7 +68,9 @@ const recipientData2 = {
     birthday: "",
     picture: ""
 };
+//#endregion
 
+//#region Queries and Mutations
 const GET_ALL_PRIVATE_MESSAGES_FOR_USER_SENDER = gql`
     query getAllPrivateMessagesForUserSender($author: String!) {
         getAllPrivateMessagesForUserSender(author: $author) {
@@ -132,7 +130,9 @@ const CREATE_USER = gql`
         }
     }
 `;
+//#endregion
 
+//#region TESTS
 describe(
     "Tests on private messages",
     () => {
@@ -348,4 +348,5 @@ describe(
             }
         )
     }
-)
+);
+//#endregion

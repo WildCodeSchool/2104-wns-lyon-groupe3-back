@@ -7,12 +7,9 @@ import { ApolloServer } from 'apollo-server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 const { createTestClient } = require('apollo-server-testing');
-// import UserModel from "../model/userModel";
-import { UserResolver } from "./UserResolver";
 
-const User = new UserResolver();
-
-const data = {
+//#region Datas
+const data1 = {
     firstname: "Pierre",
     lastname: "Caillou",
     email: "pierrefeuilleciseaux@gneugneu.com",
@@ -27,7 +24,24 @@ const data = {
     picture: ""
 };
 
-const GET_ALL_USERS = gql`{getAllUsers{firstname, lastname, email}}`;
+const data2 = {
+    firstname: "Jacques",
+    lastname: "Ouille",
+    email: "journuit@visiteurs.com",
+    address: {
+        street: "50 rue du château",
+        postalCode: "14000",
+        city: "Caen"
+    },
+    role: "STUDENT",
+    isActive: "ACTIVE",
+    birthday: "",
+    picture: ""
+};
+//#endregion
+
+//#region Queries and Mutations
+const GET_ALL_USERS = gql`{getAllUsers{_id, firstname, lastname, email}}`;
 
 const GET_USER_BY_ID = gql`
     query getUserById($id: String!) {
@@ -126,7 +140,9 @@ const DELETE_USER = gql`
         }
     }
 `;
+//#endregion
 
+//#region TESTS
 describe(
     "Tests on getUserById",
     () => {
@@ -174,17 +190,19 @@ describe(
         it(
             "We should get the same number of objects in the Resolver than in the query",
             async () => {
-                // const spy = jest.spyOn(UserModel, "find");
-                // expect(spy).toHaveBeenCalledTimes(1);
 
-                const allUsers = await User.getAllUsers();
-                const count = allUsers.length;
+                const { query, mutate } = createTestClient(apollo);
 
-                const { query } = createTestClient(apollo);
-                const res = await query({ query: GET_ALL_USERS });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1})
+                const res2 = await mutate({ query: CREATE_USER, variables: data2})
+                const allRes = [res1, res2];
 
-                expect(res.data.getAllUsers).toBeDefined();
-                expect(res.data.getAllUsers.length).toEqual(count);
+                const allClasses = await query({ query: GET_ALL_USERS });
+
+                expect(allClasses.data.getAllUsers.length).toEqual(allRes.length);
+                expect(allClasses.data.getAllUsers[0]._id).toEqual(res1.data.createUser._id);
+                expect(allClasses.data.getAllUsers[1]._id).toEqual(res2.data.createUser._id);
+
             }
         )
 
@@ -193,7 +211,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USER_BY_ID, variables: { id: res1.data.createUser._id } });
 
                 expect(res1.data.createUser._id).toEqual(res2.data.getUserById._id);
@@ -205,7 +223,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USER_BY_EMAIL, variables: { email: res1.data.createUser.email } });
 
                 expect(res1.data.createUser.email).toEqual(res2.data.getUserByEmail.email);
@@ -217,7 +235,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USERS_BY_ROLE, variables: { role: res1.data.createUser.role } });
                 const users = res2.data.getUsersByRole;
                 users.map((user) => (
@@ -231,7 +249,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USERS_BY_ISACTIVE, variables: { isActive: res1.data.createUser.isActive } });
                 const users = res2.data.getUsersByIsActive;
                 users.map((user) => (
@@ -245,7 +263,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USERS_BY_FIRSTNAME, variables: { firstname: res1.data.createUser.firstname } });
                 const users = res2.data.getUsersByFirstname;
                 users.map((user) => (
@@ -259,7 +277,7 @@ describe(
             async () => {
                 const { query, mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await query({ query: GET_USERS_BY_LASTNAME, variables: { lastname: res1.data.createUser.lastname } });
                 const users = res2.data.getUsersByLastname;
                 users.map((user) => (
@@ -272,10 +290,10 @@ describe(
             'We should create a new user and insert it in database',
             async () => {
                 const { mutate } = createTestClient(apollo);
-                const res = await mutate({ query: CREATE_USER, variables: data });
+                const res = await mutate({ query: CREATE_USER, variables: data1 });
 
-                expect(res.data.createUser.email).toEqual(data.email);
-                expect(res.data.createUser.firstname).toEqual(data.firstname);
+                expect(res.data.createUser.email).toEqual(data1.email);
+                expect(res.data.createUser.firstname).toEqual(data1.firstname);
             }
         )
 
@@ -284,28 +302,11 @@ describe(
             async () => {
                 const { mutate } = createTestClient(apollo);
 
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
+                const res2 = await mutate({ query: UPDATE_USER, variables: data2 });
 
-                const newData = {
-                    id: res1.data.createUser._id,
-                    firstname: "Seb",
-                    lastname: "Promènelechien",
-                    email: "sebaimesonchien@gneugneu.com",
-                    address: {
-                        "street": "15 rue de la paix",
-                        "postalCode": "14000",
-                        "city": "Caen"
-                    },
-                    role: "STUDENT",
-                    isActive: "ACTIVE",
-                    birthday: "",
-                    picture: ""
-                }
-
-                const res2 = await mutate({ query: UPDATE_USER, variables: newData });
-
-                expect(res2.data.updateUser.firstname).toEqual(newData.firstname);
-                expect(res2.data.updateUser.email).toEqual(newData.email);
+                expect(res2.data.updateUser.firstname).toEqual(data2.firstname);
+                expect(res2.data.updateUser.email).toEqual(data2.email);
             }
         )
 
@@ -313,7 +314,7 @@ describe(
             'We should delete a user',
             async () => {
                 const { mutate } = createTestClient(apollo);
-                const res1 = await mutate({ query: CREATE_USER, variables: data });
+                const res1 = await mutate({ query: CREATE_USER, variables: data1 });
                 const res2 = await mutate({ query: DELETE_USER, variables: {id: res1.data.createUser._id} });
 
                 expect(res2.data.deleteUser._id).toEqual(res1.data.createUser._id);
@@ -322,3 +323,4 @@ describe(
         )
     }
 );
+//#endregion
