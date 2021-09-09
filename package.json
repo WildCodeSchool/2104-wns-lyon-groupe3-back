@@ -38,6 +38,7 @@
     "mongodb-memory-server": "^6.9.6",
     "mongoose": "^5.12.6",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.2.0",
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
