@@ -28,19 +28,16 @@ export class UserResolver {
 
     @Query(returns => [User])
     public async getUsersByIsActive(@Arg('isActive', type => String) isActive: string): Promise<Array<IUser | null>> {
-        console.log(isActive);
         return await UserModel.find({ isActive: isActive });
     }
 
     @Query(returns => [User])
     public async getUsersByFirstname(@Arg('firstname', type => String) firstname: string): Promise<Array<IUser | null>> {
-        console.log(firstname);
         return await UserModel.find({ firstname: firstname });
     }
 
     @Query(returns => [User])
     public async getUsersByLastname(@Arg('lastname', type => String) lastname: string): Promise<Array<IUser | null>> {
-        console.log(lastname);
         return await UserModel.find({ lastname: lastname });
     }
 
@@ -109,7 +106,6 @@ export class UserResolver {
     ): Promise<IUser | null> {
 
         const currentUser:any = await UserModel.findById(id);
-        console.log("current", currentUser);
 
         const user = new User();
         user.firstname = firstname !== currentUser?.firstname ? firstname : currentUser?.firstname;
@@ -120,7 +116,6 @@ export class UserResolver {
         user.isActive = isActive !== currentUser?.isActive ? isActive : currentUser?.isActive;
         user.birthday = birthday !== currentUser?.birthday ? birthday : currentUser?.birthday;
         user.picture = picture !== currentUser?.picture ? picture : currentUser?.picture;
-        console.log("user", user);
 
         const errors = await validate(user);
         
@@ -128,9 +123,7 @@ export class UserResolver {
         if (errors.length > 0) return null;
        
         //TODO value of password will be changed when we will manage the modification of it
-        console.log("id", id);
         const body = {...user, _id: id, password: currentUser?.password};
-        console.log("BODY", body);
 
         await UserModel.findById(id).update(body);
         return await UserModel.findById(id);
