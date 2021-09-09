@@ -42,5 +42,5 @@ export class User {
     isActive: string;
 
     @Field(type=>String, {nullable: true})
-    picture : string
+    picture : string;
 }
