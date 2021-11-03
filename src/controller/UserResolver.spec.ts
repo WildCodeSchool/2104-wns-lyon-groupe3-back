@@ -303,7 +303,7 @@ describe(
                 const { mutate } = createTestClient(apollo);
 
                 const res1 = await mutate({ query: CREATE_USER, variables: data1 });
-                const res2 = await mutate({ query: UPDATE_USER, variables: data2 });
+                const res2 = await mutate({ query: UPDATE_USER, variables: {...data2, id: res1.data.createUser._id} });
 
                 expect(res2.data.updateUser.firstname).toEqual(data2.firstname);
                 expect(res2.data.updateUser.email).toEqual(data2.email);
