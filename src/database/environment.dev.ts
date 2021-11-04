@@ -2,13 +2,10 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const options =  {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, autoIndex: true}; 
+const options =  { autoIndex: true }; 
 const db = process.env.DATABASE_URL;
 
 type Options = {
-    useNewUrlParser: boolean;
-    useUnifiedTopology: boolean;
-    useCreateIndex: boolean;
     autoIndex: boolean;
 }
 
@@ -24,7 +21,7 @@ export interface IConfig{
 export const config:IConfig = {
     db: db, 
     options: options, 
-    serverPort: 5000,
+    serverPort: 4000,
     autoListen: true,
     verbose: true
 };
