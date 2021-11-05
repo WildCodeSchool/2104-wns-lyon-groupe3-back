@@ -15,6 +15,21 @@ const typeDefs = gql`
     type Query {
         currentUser: User
     }
+    type Query {
+        allUsers: [User]
+    }
+    type Query {
+        userById: User
+    }
+    type AuthPayload {
+        user: User
+    }
+    type Mutation {
+        logout: Boolean
+    }
+    type Mutation {
+        login(email: String!, password: String!): AuthPayload
+    }
 `;
 
 // const typeDefs = gql`

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // import { User } from "../model/graphql/User";
@@ -7,6 +8,7 @@
 // import generator from 'generate-password';
 // import { validate } from "class-validator";
 import 'reflect-metadata';
+import User from './User';
 
 interface ICurrentUserContext {
     getUser: () => any;
@@ -18,8 +20,18 @@ interface ICurrentUserContext {
 
 export const userResolvers = {
     Query: {
-        currentUser: (parent: any, args: any, context: ICurrentUserContext):any => context.getUser(),
-    }
+        currentUser: (parent, args, context: ICurrentUserContext) => context.getUser(),
+        allUsers: () => User.getAllUsers(),
+        userById: (parent, args, context) => context.getUserById(args)
+    },
+    Mutation: {
+        logout: (parent, args, context: { logout: () => any; }) => context.logout(),
+        login: async (parent, { email, password }, context):Promise<any> => {
+            const { user } = await context.authenticate('graphql-local', { email, password });
+            await context.login(user);
+            return { user }
+        },
+    },
 };
 
 // export default userResolvers;
