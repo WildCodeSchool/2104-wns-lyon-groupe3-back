@@ -8,13 +8,29 @@
 // import { validate } from "class-validator";
 import 'reflect-metadata';
 
-const userResolvers = {
-    Query: {
-        currentUser: (parent: any, args: any, context: { getUser: () => any; }):any => context.getUser(),
-    },
+interface ICurrentUserContext {
+    getUser: () => any;
 }
 
-export default userResolvers;
+// interface IAllUsersContext {
+//     getAllUsers: () => any;
+// }
+
+export const userResolvers = {
+    Query: {
+        currentUser: (parent: any, args: any, context: ICurrentUserContext):any => context.getUser(),
+    }
+};
+
+// export default userResolvers;
+
+// const userResolvers = {
+//     Query: {
+//         currentUser: (parent: any, args: any, context: ICurrentUserContext):any => context.getUser(),
+//         allUsers: (parent, args, context:IAllUsersContext):any => context.getAllUsers(),
+//     },
+// }
+
 
 // @Resolver(User)
 // export class UserResolver {

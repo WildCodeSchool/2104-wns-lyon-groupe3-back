@@ -8,7 +8,7 @@
 
 import "reflect-metadata";
 import { FilterQuery } from "mongoose";
-import express, { Application } from 'express';
+import express from 'express';
 import session from 'express-session';
 import { ApolloServer } from 'apollo-server-express';
 import { v4 as uuid } from 'uuid';
@@ -17,7 +17,7 @@ import http from "http";
 import User from "./controller/User";
 import { IUser } from "./model/userModel";
 import typeDefs from './model/typeDefs';
-import * as resolvers from "./controller/UserResolver";
+import { userResolvers as resolvers } from "./controller/UserResolver";
 
 // to move on .env variables next
 const SESSION_SECRECT = "bad secret";
@@ -32,7 +32,7 @@ passport.deserializeUser((id, done) => {
     done(null, matchingUser);
 });
 
-const app = express();
+const app:any = express();
 const httpServer = http.createServer(app);
 
 app.use(session({
@@ -53,6 +53,6 @@ const server = new ApolloServer({
     }),
 });
 
-server.applyMiddleware({ app });
+server.start().then(() => server.applyMiddleware({ app }))
 
 httpServer.listen({ port: PORT }, () => console.log(`Mongodb & Apollo server started at: http://localhost:${PORT}/`));

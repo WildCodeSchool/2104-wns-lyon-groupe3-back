@@ -1,13 +1,13 @@
 import mongoose, { Document } from "mongoose";
-import { Address } from "./graphql/Address";
+// import { Address } from "./graphql/Address";
 
 const Schema = mongoose.Schema;
 
-export const subSchema = new Schema({
-    street: String,
-    postalCode: String,
-    city: String
-})
+// export const subSchema = new Schema({
+//     street: String,
+//     postalCode: String,
+//     city: String
+// })
 
 export interface IUser extends Document {
     id: string,
@@ -16,7 +16,6 @@ export interface IUser extends Document {
     birthday: string,
     email: string,
     password: string,
-    address: Address,
     role: string,
     isActive: string,
     picture: string
@@ -30,7 +29,6 @@ export const UserSchema = new Schema(
         birthday: String,
         email: { type: String, required: true, unique: true },
         password: { type: String },
-        address: { type: subSchema },
         role: { type: String, enum: ['STUDENT', 'TEACHER', 'ADMINISTRATIVE'], default: 'STUDENT', required: true },
         isActive: { type: String, enum: ['ACTIVE', 'BLOCKED'], default: 'ACTIVE', required: true },
         picture: String
